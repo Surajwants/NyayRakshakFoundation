@@ -1,5 +1,11 @@
 // NRF Legal Platform - Production Level LegalTech Product Engine
-// Architecture: Dual Portals (Client & Advocate), 8 Practice Areas Grid, Cause List, Draft Bank & SOS Helpline
+// Systems: 
+// 1. Milestone / Step-Based Escrow Model (Trust Builder)
+// 2. Crowdfunded PIL & Public Interest Pro-Bono Hub
+// 3. Verified Pan-India Advocate Directory & 'Earn with Respect' Desk
+// 4. Pan-India Citizen Support & Reassurance Banner + Quick State Discovery
+// 5. Dual Dashboard System (Client & Advocate Portals)
+// 6. 8 Practice Areas Grid & 24x7 Emergency Fast-Track SOS Helpline
 
 const API_BASE = '/api';
 
@@ -90,11 +96,15 @@ const practiceAreasData = [
 // Production Bilingual Dictionary
 const i18n = {
   en: {
-    navSub: "NyayRakshakFoundation • High Court, NGT & Citizen Legaltech",
+    navSub: "NyayRakshakFoundation • Pan-India Legaltech Network",
     navLinkPractice: "Practice Areas",
     navLinkPortals: "Dual Dashboard",
     navLinkWorkflow: "How It Works",
-    navLinkEmergency: "Emergency Helpline",
+    navLinkEmergency: "Emergency SOS",
+    navLinkPanIndia: "Pan-India Support",
+    navLinkMilestones: "Milestone Escrow",
+    navLinkPil: "Jan Hit PIL",
+    navLinkAdvocates: "Find Advocates",
     btnEmergencyNav: "24x7 SOS Helpline",
     roleLabelClient: "Client",
     roleLabelAdvocate: "Advocate",
@@ -123,11 +133,15 @@ const i18n = {
     alertProposalSent: "Proposal delivered to client securely!"
   },
   hi: {
-    navSub: "न्यायरक्षक फाउंडेशन • हाई कोर्ट, एनजीटी व नागरिक कानूनी सहायता",
+    navSub: "न्यायरक्षक फाउंडेशन • देशव्यापी विधिक सहायता व कोर्ट नेटवर्क",
     navLinkPractice: "कानूनी क्षेत्र",
     navLinkPortals: "डैशबोर्ड प्रणाली",
     navLinkWorkflow: "कार्यप्रणाली",
-    navLinkEmergency: "आपातकालीन हेल्पलाइन",
+    navLinkEmergency: "आपातकालीन SOS",
+    navLinkPanIndia: "देशव्यापी सुरक्षा",
+    navLinkMilestones: "एस्क्रो माइलस्टोन",
+    navLinkPil: "जनहित पीआईएल",
+    navLinkAdvocates: "वकील खोजें",
     btnEmergencyNav: "24x7 SOS हेल्पलाइन",
     roleLabelClient: "नागरिक",
     roleLabelAdvocate: "वकील",
@@ -170,7 +184,16 @@ let state = {
   consultationSlots: [],
   payments: [],
   judgements: [],
+  milestonePlans: [],
+  pilCauses: [],
+  panIndiaAdvocates: [],
+  selectedStateFilter: 'ALL',
+  selectedCourtFilter: 'ALL',
+  selectedDomainFilter: 'ALL',
   selectedBidForPayment: null,
+  selectedPhaseForRelease: null,
+  selectedPilForContribution: null,
+  selectedAdvocateForOpinion: null,
   mediaRecorder: null,
   audioChunks: [],
   isRecording: false,
@@ -197,6 +220,9 @@ function setLanguage(lang) {
 
   applyTranslations();
   renderPracticeAreas();
+  renderMilestoneSystem();
+  renderPilCauses();
+  renderAdvocatesDirectory();
   renderClientTracker();
   renderClientVault();
   renderClientBilling();
@@ -211,6 +237,11 @@ function applyTranslations() {
   document.getElementById('navLinkPractice').innerText = t('navLinkPractice');
   document.getElementById('navLinkPortals').innerText = t('navLinkPortals');
   document.getElementById('navLinkWorkflow').innerText = t('navLinkWorkflow');
+  document.getElementById('navLinkEmergency').innerText = t('navLinkEmergency');
+  document.getElementById('navLinkPanIndia').innerText = t('navLinkPanIndia');
+  document.getElementById('navLinkMilestones').innerText = t('navLinkMilestones');
+  document.getElementById('navLinkPil').querySelector('span').innerText = t('navLinkPil');
+  document.getElementById('navLinkAdvocates').innerText = t('navLinkAdvocates');
   document.getElementById('btnEmergencyNav').innerText = t('btnEmergencyNav');
   document.getElementById('roleLabelClient').innerText = t('roleLabelClient');
   document.getElementById('roleLabelAdvocate').innerText = t('roleLabelAdvocate');
@@ -244,13 +275,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   setLanguage(state.currentLang);
   await loadInitialData();
   renderPracticeAreas();
+  renderMilestoneSystem();
+  renderPilCauses();
+  renderAdvocatesDirectory();
   lucide.createIcons();
 });
 
 // Load Live Data from Server
 async function loadInitialData() {
   try {
-    const [usersRes, casesRes, bidsRes, causeRes, draftRes, slotsRes, payRes, jdgRes] = await Promise.all([
+    const [usersRes, casesRes, bidsRes, causeRes, draftRes, slotsRes, payRes, jdgRes, msRes, pilRes, advRes] = await Promise.all([
       fetch(`${API_BASE}/users`),
       fetch(`${API_BASE}/cases`),
       fetch(`${API_BASE}/bids`),
@@ -258,7 +292,10 @@ async function loadInitialData() {
       fetch(`${API_BASE}/draft-bank`),
       fetch(`${API_BASE}/consultation-slots`),
       fetch(`${API_BASE}/stats`),
-      fetch(`${API_BASE}/judgements`)
+      fetch(`${API_BASE}/judgements`),
+      fetch(`${API_BASE}/milestones`),
+      fetch(`${API_BASE}/pil-causes`),
+      fetch(`${API_BASE}/advocates-directory`)
     ]);
 
     state.allUsers = await usersRes.json();
@@ -268,6 +305,9 @@ async function loadInitialData() {
     state.draftBank = await draftRes.json();
     state.consultationSlots = await slotsRes.json();
     state.judgements = await jdgRes.json();
+    state.milestonePlans = await msRes.json();
+    state.pilCauses = await pilRes.json();
+    state.panIndiaAdvocates = await advRes.json();
 
     const defaultUser = state.allUsers.find(u => u.role === 'CLIENT') || state.allUsers[0];
     applyUser(defaultUser);
@@ -279,6 +319,9 @@ async function loadInitialData() {
     renderAdvocateDraftBank();
     renderAdvocateFiles();
     renderConfirmedSlots();
+    renderMilestoneSystem();
+    renderPilCauses();
+    renderAdvocatesDirectory();
   } catch (err) {
     console.error('Data load error', err);
   }
@@ -387,9 +430,448 @@ function renderPracticeAreas() {
   `).join('');
 }
 
-// ================= 2. RENDER CLIENT DASHBOARD VIEWS ================= //
+// ================= 2. RENDER MILESTONE ESCROW SYSTEM ================= //
+function renderMilestoneSystem() {
+  const container = document.getElementById('milestoneContainer');
+  if (!container) return;
 
-// Case Status Timeline Tracker
+  const isHi = state.currentLang === 'hi';
+  const plan = state.milestonePlans[0];
+  if (!plan) return;
+
+  container.innerHTML = `
+    <!-- Milestone Plan Header -->
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-6 border-b border-slate-800">
+      <div>
+        <div class="flex items-center space-x-2">
+          <span class="champagne-badge text-[10px] font-bold px-2.5 py-0.5 rounded-full">Active Case: ${plan.caseId.toUpperCase()}</span>
+          <span class="text-xs text-slate-400 font-medium">Assigned Counsel: <strong class="text-white">${plan.advocateName}</strong></span>
+        </div>
+        <h3 class="text-lg font-bold text-white mt-1">${plan.caseTitle}</h3>
+        <p class="text-xs text-[#E2C799] mt-0.5 font-semibold">🔒 ${plan.accountabilityPledge}</p>
+      </div>
+
+      <div class="flex items-center space-x-4 bg-[#111C35] p-3 rounded-2xl border border-slate-700/80 shrink-0">
+        <div>
+          <div class="text-[10px] text-slate-400 uppercase font-semibold">Total Case Fee</div>
+          <div class="text-lg font-black text-white">₹${plan.totalAgreedFee.toLocaleString()}</div>
+        </div>
+        <div class="h-8 w-px bg-slate-700"></div>
+        <div>
+          <div class="text-[10px] text-emerald-400 uppercase font-semibold">Released to Adv.</div>
+          <div class="text-lg font-black text-emerald-400">₹2,500</div>
+        </div>
+        <div class="h-8 w-px bg-slate-700"></div>
+        <div>
+          <div class="text-[10px] text-[#E2C799] uppercase font-semibold">In Escrow Vault</div>
+          <div class="text-lg font-black text-[#E2C799]">₹13,500</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 Phases Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      ${plan.phases.map(phase => {
+        const isReleased = phase.status === 'RELEASED_TO_ADVOCATE';
+        const isSubmitted = phase.status === 'WORK_SUBMITTED';
+        const isLocked = phase.status === 'LOCKED_IN_ESCROW';
+        const isPending = phase.status === 'PENDING_DEPOSIT';
+
+        let badgeStyle = isReleased 
+          ? 'bg-emerald-950/80 text-emerald-300 border-emerald-800' 
+          : isSubmitted 
+            ? 'bg-amber-950/80 text-amber-300 border-amber-800 animate-pulse' 
+            : isLocked 
+              ? 'bg-blue-950/80 text-blue-300 border-blue-800' 
+              : 'bg-slate-800 text-slate-400 border-slate-700';
+
+        let statusText = isReleased 
+          ? 'Phase 1: Released ✓' 
+          : isSubmitted 
+            ? 'Phase 2: Review & Release' 
+            : isLocked 
+              ? 'Phase 3: Escrow Locked 🔒' 
+              : 'Phase 4: Pending Deposit';
+
+        return `
+          <div class="p-5 rounded-2xl bg-[#111C35] border ${isSubmitted ? 'border-[#C5A880]/80 shadow-lg' : 'border-slate-800'} flex flex-col justify-between space-y-4 text-xs transition">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="w-7 h-7 rounded-lg ${isReleased ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-[#E2C799] border border-slate-700'} font-black flex items-center justify-center text-xs">
+                  ${isReleased ? '✓' : phase.phaseNumber}
+                </span>
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded border ${badgeStyle}">
+                  ${statusText}
+                </span>
+              </div>
+
+              <div>
+                <h4 class="font-bold text-white text-sm leading-snug">${isHi ? phase.titleHi : phase.title}</h4>
+                <div class="text-base font-black text-[#E2C799] mt-1">₹${phase.amount.toLocaleString()}</div>
+              </div>
+
+              <div class="p-2.5 rounded-xl bg-[#060B13]/80 border border-slate-800/80 space-y-1">
+                <div class="text-[10px] text-slate-400 uppercase font-semibold">Verified Deliverable:</div>
+                <p class="text-[11px] text-slate-300 leading-relaxed">${phase.deliverable}</p>
+                ${phase.expectedCNR ? `<div class="text-[10px] text-blue-400 font-mono mt-1">Expected CNR: ${phase.expectedCNR}</div>` : ''}
+              </div>
+            </div>
+
+            <div class="pt-2 border-t border-slate-800">
+              ${isSubmitted ? `
+                <button onclick="openMilestoneReleaseModal('${phase.id}', '${escapeHtml(phase.title)}', '${escapeHtml(phase.deliverable)}', ${phase.amount})" class="w-full py-2.5 rounded-xl btn-champagne font-bold text-xs flex items-center justify-center space-x-1.5 transition shadow">
+                  <i data-lucide="check-check" class="w-3.5 h-3.5"></i>
+                  <span>Review & Release ₹${phase.amount.toLocaleString()}</span>
+                </button>
+              ` : isReleased ? `
+                <div class="text-emerald-400 font-semibold text-[11px] flex items-center space-x-1.5 justify-center py-2 bg-emerald-950/40 rounded-xl border border-emerald-900/50">
+                  <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                  <span>Completed on ${phase.completedAt}</span>
+                </div>
+              ` : `
+                <div class="text-slate-400 font-medium text-[11px] text-center py-2 bg-[#060B13] rounded-xl border border-slate-800">
+                  ${isLocked ? 'Protected in Escrow' : 'Next Phase in Queue'}
+                </div>
+              `}
+            </div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `;
+  lucide.createIcons();
+}
+
+// ================= 3. RENDER CROWDFUNDED PIL HUB ================= //
+function renderPilCauses() {
+  const container = document.getElementById('pilCausesContainer');
+  if (!container) return;
+
+  const isHi = state.currentLang === 'hi';
+
+  container.innerHTML = state.pilCauses.map(cause => {
+    const percent = Math.min(100, Math.round((cause.raisedAmount / cause.targetAmount) * 100));
+
+    return `
+      <div class="firm-card p-6 bg-[#0F172A] border border-slate-800 flex flex-col justify-between space-y-4 hover:border-slate-700 transition text-xs">
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="champagne-badge text-[10px] font-bold px-2 py-0.5 rounded-full">
+              ${cause.category.replace('_', ' ')}
+            </span>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-[#111C35] text-[#E2C799] border border-slate-700">
+              ${cause.statusBadge}
+            </span>
+          </div>
+
+          <div>
+            <h3 class="text-base font-bold text-white leading-snug">${isHi ? cause.titleHi : cause.title}</h3>
+            <p class="text-[11px] text-slate-400 mt-1 flex items-center gap-1">
+              <i data-lucide="landmark" class="w-3 h-3 text-[#E2C799]"></i>
+              <span>${cause.jurisdiction}</span>
+            </p>
+          </div>
+
+          <p class="text-xs text-slate-300 leading-relaxed">${isHi ? cause.descriptionHi : cause.description}</p>
+
+          <!-- Funding Progress Bar -->
+          <div class="space-y-1.5 pt-2 border-t border-slate-800">
+            <div class="flex items-center justify-between font-bold">
+              <span class="text-white text-sm">₹${cause.raisedAmount.toLocaleString()} <span class="text-[10px] text-slate-400 font-normal">raised of ₹${cause.targetAmount.toLocaleString()}</span></span>
+              <span class="text-[#E2C799]">${percent}%</span>
+            </div>
+            <div class="w-full bg-[#111C35] rounded-full h-2 overflow-hidden border border-slate-800">
+              <div class="bg-gradient-to-r from-[#A58963] to-[#E2C799] h-2 rounded-full transition-all duration-500" style="width: ${percent}%"></div>
+            </div>
+            <div class="flex items-center justify-between text-[10px] text-slate-400 pt-0.5">
+              <span>👥 ${cause.backersCount} Citizen Backers</span>
+              <span>Next Hearing: <strong class="text-white">${cause.nextHearingDate}</strong></span>
+            </div>
+          </div>
+
+          <!-- Lead Advocate Tag -->
+          <div class="p-2.5 rounded-xl bg-[#111C35] border border-slate-800 flex items-center justify-between">
+            <div>
+              <div class="text-[10px] text-slate-400">Lead Counsel:</div>
+              <div class="font-bold text-white text-xs">${cause.leadAdvocate}</div>
+            </div>
+            <span class="text-[10px] font-mono text-[#E2C799]">${cause.leadAdvocateBar}</span>
+          </div>
+        </div>
+
+        <div class="pt-3 border-t border-slate-800 flex items-center space-x-2">
+          <button onclick="openPilContributeModal('${cause.id}', '${escapeHtml(cause.title)}', '${escapeHtml(cause.jurisdiction)}', ${cause.raisedAmount}, ${cause.targetAmount})" class="flex-1 py-2.5 btn-champagne font-bold rounded-xl text-xs flex items-center justify-center space-x-1 transition shadow">
+            <i data-lucide="heart" class="w-3.5 h-3.5 text-rose-600"></i>
+            <span>Contribute (₹50+)</span>
+          </button>
+          <button onclick="alert('Case Diary: ' + '${cause.caseDiaryNo}' + '\\n\\nLatest Court Directive:\\n' + '${cause.courtUpdates?.[0]?.text || 'Notice served to authorities.'}')" class="px-3 py-2.5 bg-[#111C35] hover:bg-slate-800 text-slate-200 border border-slate-700 rounded-xl font-bold text-xs" title="View Case Record">
+            <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+  lucide.createIcons();
+}
+
+// ================= 4. RENDER PAN-INDIA ADVOCATES DIRECTORY ================= //
+function renderAdvocatesDirectory() {
+  const container = document.getElementById('advocatesDirectoryContainer');
+  if (!container) return;
+
+  let advocates = state.panIndiaAdvocates;
+
+  if (state.selectedStateFilter !== 'ALL') {
+    advocates = advocates.filter(a => a.state.toLowerCase() === state.selectedStateFilter.toLowerCase());
+  }
+  if (state.selectedCourtFilter !== 'ALL') {
+    advocates = advocates.filter(a => a.courts.some(c => c.toLowerCase().includes(state.selectedCourtFilter.toLowerCase())));
+  }
+  if (state.selectedDomainFilter !== 'ALL') {
+    advocates = advocates.filter(a => a.domains.some(d => d.toLowerCase().includes(state.selectedDomainFilter.toLowerCase())));
+  }
+
+  if (advocates.length === 0) {
+    container.innerHTML = `
+      <div class="col-span-full py-12 text-center text-xs text-slate-400 bg-[#0F172A] rounded-2xl border border-slate-800">
+        No advocates found matching current filters. Showing all pan-India empanelled counsel.
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = advocates.map(adv => `
+    <div class="firm-card p-6 bg-[#0F172A] border border-slate-800 hover:border-slate-700 flex flex-col justify-between space-y-4 text-xs transition">
+      <div class="space-y-3">
+        <!-- Avatar & Verified Badge -->
+        <div class="flex items-start justify-between">
+          <div class="flex items-center space-x-3">
+            <img src="${adv.avatar}" class="w-12 h-12 rounded-2xl object-cover ring-2 ring-[#C5A880]/50 shadow">
+            <div>
+              <h3 class="font-bold text-white text-base leading-snug">${adv.fullName}</h3>
+              <p class="text-[11px] text-[#E2C799] font-medium">${adv.city}, ${adv.state}</p>
+            </div>
+          </div>
+          <span class="text-[10px] font-bold px-2 py-0.5 rounded-full champagne-badge shrink-0">
+            ✓ Bar Verified
+          </span>
+        </div>
+
+        <!-- Registration & Stats -->
+        <div class="p-2.5 rounded-xl bg-[#111C35] border border-slate-800 grid grid-cols-3 gap-2 text-center">
+          <div>
+            <div class="text-[10px] text-slate-400">Enrollment</div>
+            <div class="font-mono font-bold text-white text-[11px] truncate">${adv.barCouncilNo}</div>
+          </div>
+          <div>
+            <div class="text-[10px] text-slate-400">Experience</div>
+            <div class="font-bold text-white text-xs">${adv.experienceYears}+ Yrs</div>
+          </div>
+          <div>
+            <div class="text-[10px] text-slate-400">Rating</div>
+            <div class="font-bold text-emerald-400 text-xs">★ ${adv.rating} (${adv.reviewsCount})</div>
+          </div>
+        </div>
+
+        <!-- Courts Covered -->
+        <div>
+          <div class="text-[10px] text-slate-400 uppercase font-semibold mb-1">Courts of Practice:</div>
+          <div class="flex flex-wrap gap-1">
+            ${adv.courts.map(c => `
+              <span class="text-[10px] bg-[#060B13] border border-slate-700 px-2 py-0.5 rounded text-slate-300 font-medium">${c}</span>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- Key Domains -->
+        <div>
+          <div class="text-[10px] text-slate-400 uppercase font-semibold mb-1">Key Specializations:</div>
+          <div class="flex flex-wrap gap-1">
+            ${adv.domains.map(d => `
+              <span class="text-[10px] bg-blue-950/50 border border-blue-800 px-2 py-0.5 rounded text-blue-200 font-semibold">${d}</span>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- Landmark Precedent -->
+        <div class="p-2.5 rounded-xl bg-[#060B13]/70 border border-slate-800/80">
+          <div class="text-[10px] text-[#E2C799] font-bold">Landmark Case Precedent:</div>
+          <p class="text-[11px] text-slate-300 italic mt-0.5">"${adv.landmarkJudgements}"</p>
+        </div>
+      </div>
+
+      <!-- Action Footer with Paid Virtual Opinion -->
+      <div class="pt-3 border-t border-slate-800 flex items-center justify-between">
+        <div>
+          <div class="text-[10px] text-slate-400">Virtual Legal Opinion:</div>
+          <div class="text-sm font-black text-white">₹${adv.consultationFee} <span class="text-[10px] text-slate-400 font-normal">/ 30 min</span></div>
+        </div>
+        <button onclick="openVirtualOpinionModal('${adv.id}', '${escapeHtml(adv.fullName)}', '${escapeHtml(adv.courts[0])}', ${adv.consultationFee})" class="px-4 py-2 btn-champagne rounded-xl font-bold text-xs flex items-center space-x-1.5 transition shadow">
+          <i data-lucide="video" class="w-3.5 h-3.5"></i>
+          <span>Book Opinion</span>
+        </button>
+      </div>
+    </div>
+  `).join('');
+  lucide.createIcons();
+}
+
+// State & Court Filter Handlers
+function filterAdvocatesByState(stateName) {
+  state.selectedStateFilter = stateName;
+  document.querySelectorAll('.adv-state-pill').forEach(btn => {
+    btn.className = 'adv-state-pill px-3 py-1.5 rounded-lg switch-btn-inactive';
+  });
+  const activeBtn = document.getElementById(`pillState${stateName === 'ALL' ? 'ALL' : stateName.replace(/\s+/g, '')}`);
+  if (activeBtn) activeBtn.className = 'adv-state-pill px-3 py-1.5 rounded-lg switch-btn-active';
+  renderAdvocatesDirectory();
+}
+
+function applyAdvocateFilters() {
+  const stateVal = document.getElementById('quickFilterState').value;
+  const courtVal = document.getElementById('quickFilterCourt').value;
+  const domainVal = document.getElementById('quickFilterDomain').value;
+  state.selectedStateFilter = stateVal;
+  state.selectedCourtFilter = courtVal;
+  state.selectedDomainFilter = domainVal;
+  renderAdvocatesDirectory();
+}
+
+// ================= 5. MILESTONE & PIL HANDLERS ================= //
+
+function openMilestoneReleaseModal(phaseId, title, deliverable, amount) {
+  state.selectedPhaseForRelease = phaseId;
+  document.getElementById('msModalDeliverableTitle').innerText = title;
+  document.getElementById('msModalDeliverableDesc').innerText = deliverable;
+  document.getElementById('msModalAmountDisplay').innerText = `₹${amount.toLocaleString()}`;
+  openModal('modalMilestoneRelease');
+}
+
+async function confirmMilestoneReleaseNow() {
+  if (!state.selectedPhaseForRelease) return;
+  const btn = document.getElementById('btnConfirmReleaseMs');
+  btn.disabled = true;
+  btn.innerText = 'Releasing Escrow Funds...';
+
+  try {
+    const res = await fetch(`${API_BASE}/milestones/${state.selectedPhaseForRelease}/release`, {
+      method: 'POST'
+    });
+    const data = await res.json();
+    btn.disabled = false;
+    btn.innerText = 'Approve Deliverable & Release Payment';
+    closeModal('modalMilestoneRelease');
+    await loadInitialData();
+    renderMilestoneSystem();
+    alert('Milestone Approved! ₹5,500 has been released from escrow directly to the advocate’s account. Phase 3 (Court Filing & CNR generation) is now activated!');
+  } catch (err) {
+    btn.disabled = false;
+    console.error('Milestone release error', err);
+  }
+}
+
+function openPilContributeModal(causeId, title, court, currentRaised, target) {
+  document.getElementById('pilModalCauseIdHidden').value = causeId;
+  document.getElementById('pilModalCauseTitle').innerText = title;
+  document.getElementById('pilModalCourtInfo').innerText = court;
+  openModal('modalPilContribute');
+}
+
+function setPilAmount(amt) {
+  document.getElementById('pilCustomAmount').value = amt;
+}
+
+async function handlePilContributionSubmit(e) {
+  e.preventDefault();
+  const causeId = document.getElementById('pilModalCauseIdHidden').value;
+  const contributorName = document.getElementById('pilContributorName').value;
+  const amount = parseFloat(document.getElementById('pilCustomAmount').value) || 500;
+
+  try {
+    const res = await fetch(`${API_BASE}/pil-causes/${causeId}/contribute`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount, contributorName })
+    });
+    const data = await res.json();
+    closeModal('modalPilContribute');
+    await loadInitialData();
+    renderPilCauses();
+    alert(`Thank you, ${contributorName}! Your contribution of ₹${amount} has been added to the Public Pro-Bono Escrow. Justice is in motion!`);
+  } catch (err) {
+    console.error('PIL contribution error', err);
+  }
+}
+
+async function handleNewPilSubmit(e) {
+  e.preventDefault();
+  const title = document.getElementById('newPilTitle').value;
+  const category = document.getElementById('newPilCategory').value;
+  const jurisdiction = document.getElementById('newPilJurisdiction').value;
+  const description = document.getElementById('newPilDesc').value;
+  const targetAmount = document.getElementById('newPilBudget').value;
+
+  try {
+    const res = await fetch(`${API_BASE}/pil-causes`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, category, jurisdiction, description, targetAmount })
+    });
+    await res.json();
+    closeModal('modalSubmitPil');
+    document.getElementById('newPilTitle').value = '';
+    document.getElementById('newPilDesc').value = '';
+    await loadInitialData();
+    renderPilCauses();
+    alert('Public interest grievance submitted! NRF pro-bono desk is conducting preliminary legal vetting.');
+  } catch (err) {
+    console.error('New PIL error', err);
+  }
+}
+
+function openVirtualOpinionModal(advId, advName, court, fee) {
+  document.getElementById('voAdvIdHidden').value = advId;
+  document.getElementById('voAdvName').innerText = `Book Opinion with ${advName}`;
+  document.getElementById('voAdvCourt').innerText = court;
+  document.getElementById('voFeeDisplay').innerText = `₹${fee}`;
+  const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
+  document.getElementById('voDate').value = tomorrow;
+  openModal('modalVirtualOpinion');
+}
+
+async function handleVirtualOpinionSubmit(e) {
+  e.preventDefault();
+  const advId = document.getElementById('voAdvIdHidden').value;
+  const date = document.getElementById('voDate').value;
+  const time = document.getElementById('voTime').value;
+  const topic = document.getElementById('voBrief').value;
+
+  try {
+    const res = await fetch(`${API_BASE}/consultation-slots`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        clientId: state.currentUser?.id || 'usr_client_1',
+        advocateId: advId,
+        date,
+        time,
+        mode: 'Encrypted Virtual Video Chamber',
+        topic
+      })
+    });
+    await res.json();
+    closeModal('modalVirtualOpinion');
+    await loadInitialData();
+    switchPortalTab('CLIENT');
+    switchClientSubTab('c-slot');
+    alert('Virtual Legal Opinion booked! Consultation slot confirmed and fee safely deposited in Escrow.');
+  } catch (err) {
+    console.error('Virtual opinion booking error', err);
+  }
+}
+
+// ================= 6. EXISTING CLIENT & ADVOCATE VIEWS ================= //
+
 function renderClientTracker() {
   const container = document.getElementById('clientCaseTimelineContainer');
   if (!container) return;
@@ -424,7 +906,6 @@ function renderClientTracker() {
   `;
 }
 
-// Client Secure Vault
 function renderClientVault() {
   const container = document.getElementById('clientVaultFilesContainer');
   if (!container) return;
@@ -452,7 +933,6 @@ function renderClientVault() {
   `).join('');
 }
 
-// Client Escrow Billing History
 function renderClientBilling() {
   const container = document.getElementById('clientBillingListContainer');
   if (!container) return;
@@ -502,7 +982,6 @@ function renderClientBilling() {
   `).join('');
 }
 
-// Confirmed Consultation Slots
 function renderConfirmedSlots() {
   const container = document.getElementById('confirmedSlotsList');
   if (!container) return;
@@ -521,9 +1000,6 @@ function renderConfirmedSlots() {
   `).join('');
 }
 
-// ================= 3. RENDER ADVOCATE DASHBOARD VIEWS ================= //
-
-// Daily Cause List
 function renderAdvocateCauseList() {
   const container = document.getElementById('advocateCauseListContainer');
   if (!container) return;
@@ -555,7 +1031,6 @@ function renderAdvocateCauseList() {
   `).join('');
 }
 
-// Legal Draft Bank (Templates)
 function renderAdvocateDraftBank() {
   const container = document.getElementById('advocateDraftBankContainer');
   if (!container) return;
@@ -579,7 +1054,6 @@ function renderAdvocateDraftBank() {
   `).join('');
 }
 
-// Advocate Retained Files
 function renderAdvocateFiles() {
   const container = document.getElementById('advocateCaseFilesContainer');
   if (!container) return;
@@ -616,8 +1090,7 @@ function renderAdvocateFiles() {
   }).join('');
 }
 
-// ================= 4. EMERGENCY & INTAKE HANDLERS ================= //
-
+// Emergency & General Inquiry
 function openEmergencyModal() {
   openModal('modalEmergency');
 }
@@ -658,181 +1131,133 @@ async function handleConsultationInquirySubmit(e) {
   const brief = document.getElementById('inquiryBrief').value;
 
   try {
-    const payload = {
-      clientId: state.currentUser.id,
-      folderName: `Consultation: ${category.replace('_', ' ')}`,
-      category,
-      summary: brief
-    };
-    await fetch(`${API_BASE}/cases`, {
+    const res = await fetch(`${API_BASE}/cases`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: JSON.stringify({
+        clientId: state.currentUser?.id || 'usr_client_1',
+        folderName: `Matter: ${category.replace('_', ' ')}`,
+        category,
+        title: `Consultation Request: ${category}`,
+        summary: brief,
+        jurisdiction: { state: 'India / Global', district: 'Consultation Desk' }
+      })
     });
-
+    await res.json();
     closeModal('modalConsultationInquiry');
     await loadInitialData();
     switchPortalTab('CLIENT');
     alert(t('alertCaseSaved'));
   } catch (err) {
-    console.error('Inquiry error', err);
-  }
-}
-
-async function handleBookSlot(e) {
-  e.preventDefault();
-  const date = document.getElementById('slotInputDate').value;
-  const time = document.getElementById('slotInputTime').value;
-  const mode = document.getElementById('slotInputMode').value;
-
-  try {
-    const payload = {
-      clientId: state.currentUser.id,
-      advocateId: 'usr_adv_1',
-      date,
-      time,
-      mode,
-      topic: 'Matter Strategy & Injunction Discussion'
-    };
-    const res = await fetch(`${API_BASE}/consultation-slots`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    const newSlot = await res.json();
-    state.consultationSlots.push(newSlot);
-    renderConfirmedSlots();
-    alert(t('alertSlotBooked'));
-  } catch (err) {
-    console.error('Slot booking error', err);
+    console.error('Case submit error', err);
   }
 }
 
 function handleJoinAdvocate() {
-  const adv = state.allUsers.find(u => u.role === 'ADVOCATE') || state.allUsers[1];
-  applyUser(adv);
+  setRole('ADVOCATE');
   switchPortalTab('ADVOCATE');
   const section = document.getElementById('section-portals');
-  section?.scrollIntoView({ behavior: 'smooth' });
+  if (section) section.scrollIntoView({ behavior: 'smooth' });
 }
 
 // Modal Helpers
 function openModal(id) {
-  document.getElementById(id)?.classList.remove('hidden');
-  lucide.createIcons();
-}
-function closeModal(id) {
-  document.getElementById(id)?.classList.add('hidden');
+  const m = document.getElementById(id);
+  if (m) m.classList.remove('hidden');
 }
 
-// Media & Prompt Handlers
+function closeModal(id) {
+  const m = document.getElementById(id);
+  if (m) m.classList.add('hidden');
+}
+
+// Case Intake Form & Voice Recorder
+function updatePromptFile(file) {
+  if (file) {
+    state.attachedDocFile = file;
+    document.getElementById('promptDocLabel').innerText = file.name.substring(0, 15) + '...';
+    document.getElementById('promptStatusText').innerText = `Document Attached: ${file.name}`;
+    document.getElementById('promptStatusIndicator').classList.remove('hidden');
+  }
+}
+
 async function toggleAudioRecording() {
-  const statusIndicator = document.getElementById('promptStatusIndicator');
-  const statusText = document.getElementById('promptStatusText');
+  const micBtn = document.getElementById('btnPromptMic');
+  const micLabel = document.getElementById('promptMicLabel');
 
   if (!state.isRecording) {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       state.mediaRecorder = new MediaRecorder(stream);
       state.audioChunks = [];
-      state.mediaRecorder.ondataavailable = e => state.audioChunks.push(e.data);
-      state.mediaRecorder.onstop = () => {
-        state.recordedAudioBlob = new Blob(state.audioChunks, { type: 'audio/mp3' });
-        statusIndicator.classList.remove('hidden');
-        statusText.innerText = 'Voice Statement Recorded ✓';
+
+      state.mediaRecorder.ondataavailable = e => {
+        if (e.data.size > 0) state.audioChunks.push(e.data);
       };
+
+      state.mediaRecorder.onstop = () => {
+        state.recordedAudioBlob = new Blob(state.audioChunks, { type: 'audio/m4a' });
+        document.getElementById('promptStatusText').innerText = 'Voice Statement Recorded (Ready)';
+        document.getElementById('promptStatusIndicator').classList.remove('hidden');
+      };
+
       state.mediaRecorder.start();
       state.isRecording = true;
-      statusIndicator.classList.remove('hidden');
-      statusText.innerText = '🔴 Recording... click mic to finish';
-    } catch (e) {
-      state.isRecording = true;
-      statusIndicator.classList.remove('hidden');
-      statusText.innerText = 'Recording voice statement...';
-      setTimeout(() => {
-        state.isRecording = false;
-        state.recordedAudioBlob = new Blob(['sample audio'], { type: 'audio/mp3' });
-        statusText.innerText = 'Voice Statement Recorded ✓';
-      }, 2000);
+      micBtn.classList.add('bg-rose-900', 'text-rose-200');
+      micLabel.innerText = 'Recording (Click Stop)...';
+    } catch (err) {
+      console.warn('Microphone permission denied', err);
+      alert('Microphone access denied. You can still type your summary or upload a document.');
     }
   } else {
-    if (state.mediaRecorder && state.mediaRecorder.state !== 'inactive') state.mediaRecorder.stop();
+    state.mediaRecorder.stop();
     state.isRecording = false;
-  }
-}
-
-function updatePromptFile(file) {
-  if (file) {
-    state.attachedDocFile = file;
-    const statusIndicator = document.getElementById('promptStatusIndicator');
-    const statusText = document.getElementById('promptStatusText');
-    statusIndicator.classList.remove('hidden');
-    statusText.innerText = `Notice Attached: ${file.name.substring(0, 16)}... ✓`;
+    micBtn.classList.remove('bg-rose-900', 'text-rose-200');
+    micLabel.innerText = 'Voice Note Saved ✓';
   }
 }
 
 async function handlePromptSubmit() {
-  const summary = document.getElementById('promptSummary').value.trim();
+  const summary = document.getElementById('promptSummary').value;
   const category = document.getElementById('promptCategory').value;
 
   if (!summary && !state.recordedAudioBlob && !state.attachedDocFile) {
-    alert('Please describe your legal issue or attach a voice note.');
+    alert('Please enter a brief description, record a voice statement, or attach a document notice.');
     return;
   }
 
-  const folderName = summary ? summary.substring(0, 36) + (summary.length > 36 ? '...' : '') : 'Legal Consultation Matter';
-
   try {
-    const payload = {
-      clientId: state.currentUser.id,
-      folderName,
-      category,
-      jurisdiction: { country: 'India', state: 'All-India', district: 'India' },
-      title: folderName,
-      summary: summary || 'Voice Statement Attached'
-    };
-
     const res = await fetch(`${API_BASE}/cases`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: JSON.stringify({
+        clientId: state.currentUser?.id || 'usr_client_1',
+        folderName: summary ? summary.substring(0, 32) + '...' : 'Confidential Case Vault',
+        category,
+        title: `Client Matter: ${category}`,
+        summary: summary || 'Voice Statement / Evidence uploaded into confidential vault.',
+        jurisdiction: { state: 'India', district: 'High Court / District Court' }
+      })
     });
     const newCase = await res.json();
 
-    if (state.recordedAudioBlob) {
-      const formData = new FormData();
-      formData.append('file', state.recordedAudioBlob, 'Voice_Statement.mp3');
-      formData.append('fileType', 'AUDIO');
-      formData.append('duration', '2m 15s');
-      await fetch(`${API_BASE}/cases/${newCase.id}/upload`, { method: 'POST', body: formData });
-    }
-
-    if (state.attachedDocFile) {
-      const formData = new FormData();
-      formData.append('file', state.attachedDocFile);
-      formData.append('fileType', 'DOCUMENT');
-      await fetch(`${API_BASE}/cases/${newCase.id}/upload`, { method: 'POST', body: formData });
-    }
-
     document.getElementById('promptSummary').value = '';
-    state.recordedAudioBlob = null;
-    state.attachedDocFile = null;
     document.getElementById('promptStatusIndicator').classList.add('hidden');
 
     await loadInitialData();
     switchPortalTab('CLIENT');
     switchClientSubTab('c-tracker');
-    document.getElementById('section-portals').scrollIntoView({ behavior: 'smooth' });
-    alert(t('alertCaseSaved'));
+    const portals = document.getElementById('section-portals');
+    if (portals) portals.scrollIntoView({ behavior: 'smooth' });
+    alert('Matter encrypted into Vault! Advocates on the NRF Panel have been notified to review and submit strategy bids.');
   } catch (err) {
-    console.error('Submit error', err);
+    console.error('Case intake error', err);
   }
 }
 
-// Bidding & Payments
 function openBidModal(caseId, title) {
   document.getElementById('bidCaseIdHidden').value = caseId;
-  document.getElementById('bidModalTitle').innerText = `Submit Proposal: ${title}`;
+  document.getElementById('bidModalTitle').innerText = `Submit Strategy Proposal for: ${title}`;
   openModal('modalSubmitBid');
 }
 
@@ -900,7 +1325,6 @@ async function executePaymentNow() {
   }
 }
 
-// Switch Persona
 function renderPersonaList() {
   const container = document.getElementById('personaListContainer');
   if (!container) return;

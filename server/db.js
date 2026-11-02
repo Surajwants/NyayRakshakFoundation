@@ -99,284 +99,222 @@ const initialData = {
       clientId: 'usr_client_1',
       folderName: 'Ancestral Property Encroachment & Mutation',
       category: 'CIVIL_PROPERTY',
-      title: 'Illegal construction on 4-Kanal ancestral agricultural land during NRI absence',
-      summary: 'Uncle colluded with local Lekhpal to alter Khatauni mutation while owner was in UAE. Need urgent stay order from Civil Court (Order 39 CPC) and Revenue appeal before Sub-Divisional Collector.',
-      jurisdiction: { country: 'India', state: 'Punjab', district: 'Jalandhar' },
-      guidelineFeePaid: true,
+      title: 'Illegal Encroachment on Ancestral Agricultural Land (Phagwara, Punjab)',
+      summary: 'Ancestral land measuring 6.5 acres occupied by local land mafia while client was residing in Dubai. Patwari refused mutation (Dakhil Kharij). Urgent stay order (Order 39 CPC) and civil partition suit required.',
+      jurisdiction: { state: 'Punjab', district: 'Kapurthala', court: 'Civil Judge Senior Division / SDM Court' },
       status: 'OPEN_FOR_BIDS',
-      currentStage: 'LEGAL_VETTING',
+      createdAt: '2026-10-25T11:00:00Z',
       timelineSteps: [
         { title: 'Case Intake & Vault Created', date: '25 Oct 2026', done: true },
-        { title: 'Document & Revenue Vetting', date: '27 Oct 2026', done: true },
-        { title: 'Advocate Bidding & Strategy', date: 'Active', done: false },
-        { title: 'Court Stay / Notice Filing', date: 'Pending Retainer', done: false },
-        { title: 'Interim Injunction Order', date: 'Estimated 5 Days', done: false }
+        { title: 'Revenue Records & Jamabandi Vetted', date: '27 Oct 2026', done: true },
+        { title: 'Advocate Strategy Bids Active', date: 'Active', done: false },
+        { title: 'Court Filing & Stay Order Injunction', date: 'Pending Retainer', done: false }
       ],
-      hiredAdvocateId: null,
-      createdAt: '2026-10-25T08:15:00Z',
       files: [
-        { id: 'f1', name: 'Registered_SaleDeed.pdf', type: 'DOCUMENT', size: '3.4 MB', url: '/uploads/sample_deed.pdf', confidential: true },
-        { id: 'f2', name: 'VoiceNote_PatwariIssue.mp3', type: 'AUDIO', duration: '3m 42s', url: '/uploads/sample_deed.pdf', confidential: false }
+        { id: 'f_1', name: 'Voice Statement - Vikram Singh.m4a', type: 'AUDIO', url: '/uploads/sample_voice.m4a', confidential: true },
+        { id: 'f_2', name: 'Jamabandi Record 2024-25.pdf', type: 'DOCUMENT', url: '/uploads/sample_deed.pdf', confidential: false },
+        { id: 'f_3', name: 'Tehsildar Rejection Notice.pdf', type: 'DOCUMENT', url: '/uploads/sample_rejection.pdf', confidential: false }
       ]
     },
     {
       id: 'case_102',
       clientId: 'usr_client_3',
-      folderName: 'NGT Pollution Notice on Rice Mill Industry',
+      folderName: 'NGT Factory Closure Notice Defence',
       category: 'NGT_INDUSTRY',
-      title: 'Pollution Control Board & NGT order issued closure notice citing emission mismatch',
-      summary: 'State Pollution Control Board issued closure direction under Section 31A of Air Act on our processing unit without inspection notice. Need urgent representation and stay before NGT Principal Bench Delhi.',
-      jurisdiction: { country: 'India', state: 'Uttar Pradesh', district: 'Kanpur' },
-      guidelineFeePaid: true,
+      title: 'Pollution Control Board Consent to Operate Revocation',
+      summary: 'State Pollution Control Board issued closure order under Water Act 1974 without hearing client. Need urgent Section 14 Appeal and Interim Stay before NGT Principal Bench, New Delhi.',
+      jurisdiction: { state: 'Delhi / UP', district: 'Kanpur / New Delhi', court: 'National Green Tribunal (Principal Bench)' },
       status: 'OPEN_FOR_BIDS',
-      currentStage: 'STRATEGY_REVIEW',
-      timelineSteps: [
-        { title: 'Notice Uploaded to Vault', date: '29 Oct 2026', done: true },
-        { title: 'Environmental Law Vetting', date: '30 Oct 2026', done: true },
-        { title: 'NGT Advocate Proposals', date: 'Active', done: false },
-        { title: 'Listing before Principal Bench', date: 'Pending Retainer', done: false }
-      ],
-      hiredAdvocateId: null,
-      createdAt: '2026-10-29T10:00:00Z',
+      createdAt: '2026-10-29T14:00:00Z',
       files: [
-        { id: 'f3', name: 'Pollution_Notice_Copy.pdf', type: 'DOCUMENT', size: '2.1 MB', url: '/uploads/sample_deed.pdf', confidential: true },
-        { id: 'f4', name: 'Voice_Factory_Explanation.mp3', type: 'AUDIO', duration: '2m 18s', url: '/uploads/sample_deed.pdf', confidential: false }
-      ]
-    },
-    {
-      id: 'case_103',
-      clientId: 'usr_client_2',
-      folderName: 'High Court Writ for Unaction in Land Encroachment',
-      category: 'HC_WRITS',
-      title: 'Writ of Mandamus against District Magistrate for sitting on illegal land grab inquiry',
-      summary: 'Submitted multiple representations to DM and SDM regarding public road encroachment blocking our house. Over 6 months passed with no action. Need High Court Writ of Mandamus to compel municipal action.',
-      jurisdiction: { country: 'India', state: 'Uttar Pradesh', district: 'Lucknow' },
-      guidelineFeePaid: true,
-      status: 'OPEN_FOR_BIDS',
-      currentStage: 'STRATEGY_REVIEW',
-      timelineSteps: [
-        { title: 'Representation Records Filed', date: '30 Oct 2026', done: true },
-        { title: 'Writ Grounds Finalized', date: '01 Nov 2026', done: true },
-        { title: 'Advocate Selection & Fee Escrow', date: 'Active', done: false },
-        { title: 'Filing before Lucknow High Court', date: 'Pending', done: false }
-      ],
-      hiredAdvocateId: null,
-      createdAt: '2026-10-30T11:20:00Z',
-      files: [
-        { id: 'f5', name: 'Representation_Receipt_DM.pdf', type: 'DOCUMENT', size: '1.8 MB', url: '/uploads/sample_deed.pdf', confidential: true }
+        { id: 'f_4', name: 'UPPCB Closure Order copy.pdf', type: 'DOCUMENT', url: '/uploads/sample_order.pdf', confidential: false }
       ]
     },
     {
       id: 'case_105',
       clientId: 'usr_client_1',
-      folderName: 'RTI Second Appeal for Govt Tender Scrutiny',
+      folderName: 'RTI 2nd Appeal - Highway Tender Corruption',
       category: 'RTI_APPEALS',
-      title: 'Public Information Officer denied road construction tender bills citing commercial secrecy',
-      summary: 'PIO and First Appellate Authority denied information under Section 8(1)(d). Need Second Appeal drafting before State Information Commission to expose corrupt fund diversion.',
-      jurisdiction: { country: 'India', state: 'Punjab', district: 'Chandigarh' },
-      guidelineFeePaid: true,
+      title: 'Information Commission 2nd Appeal under Section 19(3) RTI Act',
+      summary: 'Public Information Officer (PIO) denied tender bids and audit records for highway construction citing Section 8(1)(d). Need strategic 2nd appeal to unmask sub-standard works.',
+      jurisdiction: { state: 'Delhi', district: 'Central', court: 'Central Information Commission (CIC)' },
       status: 'HIRED',
-      currentStage: 'COMMISSION_HEARING',
-      timelineSteps: [
-        { title: 'RTI Rejection Order Uploaded', date: '22 Oct 2026', done: true },
-        { title: 'Advocate Anjali Deshmukh Retained', date: '23 Oct 2026', done: true },
-        { title: '2nd Appeal Drafted & Submitted', date: '26 Oct 2026', done: true },
-        { title: 'Notice Issued by State Info Commission', date: '01 Nov 2026', done: true },
-        { title: 'Final Hearing & Disclosure Order', date: 'Scheduled 18 Nov', done: false }
-      ],
       hiredAdvocateId: 'usr_adv_3',
-      createdAt: '2026-10-22T09:15:00Z',
+      createdAt: '2026-10-20T08:00:00Z',
       files: [
-        { id: 'f7', name: 'RTI_Rejection_Letter.pdf', type: 'DOCUMENT', size: '1.4 MB', url: '/uploads/sample_deed.pdf', confidential: true }
+        { id: 'f_9', name: 'PIO Rejection & First Appeal Order.pdf', type: 'DOCUMENT', url: '/uploads/sample_rejection.pdf', confidential: false }
       ]
     }
   ],
 
-  // Advocate Bids
+  // Advocate Strategy Bids
   bids: [
     {
       id: 'bid_501',
       caseId: 'case_101',
       advocateId: 'usr_adv_1',
-      briefAdvice: 'We will file an immediate application under Order 39 Rule 1 & 2 CPC in Jalandhar Civil Court to obtain an interim injunction halting construction within 48 hours, while concurrently moving a revenue revision under Punjab Land Revenue Act.',
-      feeAmount: 28000,
+      briefAdvice: 'We will immediately institute a Title Suit with an urgent Application under Order 39 Rules 1 & 2 CPC to obtain ad-interim injunction against alteration of land status. Parallel representation to DC under Punjab Land Revenue Act.',
+      feeAmount: 25000,
       currency: 'INR',
-      timeline: '3 to 5 business days for stay',
+      timeline: 'Court filing within 48 hours of retainer deposit.',
       status: 'PENDING',
-      createdAt: '2026-10-25T14:20:00Z'
+      createdAt: '2026-10-26T09:30:00Z'
     },
     {
       id: 'bid_502',
-      caseId: 'case_102',
+      caseId: 'case_101',
       advocateId: 'usr_adv_2',
-      briefAdvice: 'We will prepare an emergency petition before NGT Principal Bench challenging the violation of natural justice (Section 31A Air Act mandate). We will seek an immediate interim stay on factory closure subject to stack monitoring test.',
-      feeAmount: 45000,
+      briefAdvice: 'Prima facie revenue entry manipulation evident. Will move Sub-Divisional Magistrate under Section 145 CrPC for immediate police protection and seal illegal construction on agricultural chunk.',
+      feeAmount: 18000,
       currency: 'INR',
-      timeline: '4 working days for NGT listing',
+      timeline: 'Interim protection notice drafted in 24 hours.',
       status: 'PENDING',
-      createdAt: '2026-10-29T15:30:00Z'
+      createdAt: '2026-10-26T12:15:00Z'
     },
     {
       id: 'bid_503',
-      caseId: 'case_103',
-      advocateId: 'usr_adv_1',
-      briefAdvice: 'We will draft and file a Writ Petition (Civil Misc) under Article 226 before the Lucknow Bench of Allahabad High Court praying for a Writ of Mandamus directing the DM to demolish the illegal obstruction within 2 weeks.',
-      feeAmount: 35000,
+      caseId: 'case_102',
+      advocateId: 'usr_adv_2',
+      briefAdvice: 'The closure order violates audi alteram partem. Will file emergency Original Application before NGT Principal Bench seeking ex-parte stay citing livelihood of 80 workers and compliant ETP reports.',
+      feeAmount: 40000,
       currency: 'INR',
-      timeline: '5-7 days for High Court notice',
+      timeline: 'Listing before Bench within 3 days.',
       status: 'PENDING',
-      createdAt: '2026-10-30T16:00:00Z'
+      createdAt: '2026-10-30T10:00:00Z'
     },
     {
       id: 'bid_504',
       caseId: 'case_105',
       advocateId: 'usr_adv_3',
-      briefAdvice: 'Under Section 8(2) RTI Act, larger public interest supersedes trade secrets in government civil road works. We have filed the 2nd Appeal and secured hearing notice.',
+      briefAdvice: 'Tender award copies cannot be blanket protected under Section 8(1)(d). Will file CIC 2nd Appeal with Supreme Court precedents on public interest overriding commercial confidence.',
       feeAmount: 12000,
       currency: 'INR',
-      timeline: 'Completed & Admitted',
+      timeline: 'CIC registry filing done.',
       status: 'ACCEPTED',
-      createdAt: '2026-10-23T11:00:00Z'
+      createdAt: '2026-10-22T10:00:00Z'
     }
   ],
 
-  // Advocate Daily Court Cause List (Advocate Portal Feature)
+  // Advocate Cause List
   causeList: [
     {
       id: 'cl_1',
       advocateId: 'usr_adv_1',
-      courtName: 'High Court of Judicature at Allahabad (Lucknow)',
-      courtRoom: 'Court No. 3 (Bench of Hon\'ble Justice Verma)',
-      itemNo: 'Item #12',
-      caseNumber: 'Writ-C No. 8421/2026',
-      parties: 'Sunita Devi vs State of UP & District Magistrate',
-      stage: 'Fresh Admission / Interim Mandamus',
-      time: '10:30 AM',
-      status: 'TODAY'
+      date: '2026-11-03',
+      courtName: 'High Court of Delhi',
+      courtRoom: 'Court No. 14, Division Bench II',
+      itemNo: 'Item 8',
+      caseNumber: 'W.P.(C) 4192/2026',
+      parties: 'Om Logistics Pvt Ltd vs. Union of India & GST Commissioner',
+      stage: 'Stay Injunction & Notice Arguments',
+      status: 'TODAY',
+      time: '10:30 AM'
     },
     {
       id: 'cl_2',
-      advocateId: 'usr_adv_2',
-      courtName: 'National Green Tribunal (Principal Bench, New Delhi)',
-      courtRoom: 'Court 1 (Full Bench)',
-      itemNo: 'Item #08',
-      caseNumber: 'OA No. 119/2026',
-      parties: 'Rameshwar Agro vs UP Pollution Control Board',
-      stage: 'Stay Extension & Air Quality Inspection Report',
-      time: '02:00 PM',
-      status: 'TOMORROW'
+      advocateId: 'usr_adv_1',
+      date: '2026-11-03',
+      courtName: 'Allahabad High Court (Lucknow Bench)',
+      courtRoom: 'Court No. 3 (Single Bench)',
+      itemNo: 'Item 12',
+      caseNumber: 'W.P. (Mandamus) 8901/2026',
+      parties: 'Kishan Lal vs. State of UP & Tehsildar Barabanki',
+      stage: 'Compliance Report of Revenue Demarcation',
+      status: 'TODAY',
+      time: '02:00 PM'
     },
     {
       id: 'cl_3',
-      advocateId: 'usr_adv_3',
-      courtName: 'State Information Commission (Lucknow Bench)',
-      courtRoom: 'Bench Room 4',
-      itemNo: 'Item #05',
-      caseNumber: 'Second Appeal No. 4410/2026',
-      parties: 'Vikram Singh vs PIO Public Works Dept',
-      stage: 'Final Hearing & Penalty on Errant PIO',
-      time: '11:45 AM',
-      status: '18 NOV 2026'
+      advocateId: 'usr_adv_2',
+      date: '2026-11-04',
+      courtName: 'National Green Tribunal (Principal Bench, New Delhi)',
+      courtRoom: 'Court No. 1, Principal Bench',
+      itemNo: 'Item 4',
+      caseNumber: 'O.A. No. 712/2026',
+      parties: 'Green Earth Foundation vs. State Pollution Control Board & Ors.',
+      stage: 'ETP Inspection Report Scrutiny',
+      status: 'UPCOMING',
+      time: '11:00 AM'
     }
   ],
 
-  // Advocate Draft Bank (Standard Indian Legal Petitions)
+  // Draft Bank
   draftBank: [
     {
-      id: 'draft_1',
-      title: 'Writ Petition (Civil) under Article 226 of the Constitution of India',
-      category: 'High Court Writs (Mandamus)',
-      description: 'Standard prayer format for compelling district administration, police or municipal authorities to discharge statutory public duties.',
-      sections: 'Article 226, Constitution of India',
-      downloads: 412
+      id: 'db_1',
+      category: 'HIGH_COURT_WRIT',
+      title: 'Writ of Mandamus (Govt Dept Inaction)',
+      description: 'Article 226 petition against Tehsildar / Municipal Corporation failing to discharge statutory duty after representation.',
+      sections: 'Art 226 Constitution of India',
+      tags: ['Mandamus', 'High Court', 'Govt Inaction']
     },
     {
-      id: 'draft_2',
-      title: 'Application for Ad-Interim Injunction under Order 39 Rule 1 & 2 CPC',
-      category: 'Civil & Property Law',
-      description: 'Urgent stay application with prima facie case, balance of convenience, and irreparable injury pleading to freeze land encroachment.',
-      sections: 'Order 39 Rule 1 & 2 read with Section 151 CPC',
-      downloads: 680
+      id: 'db_2',
+      category: 'CIVIL_INJUNCTION',
+      title: 'Order 39 Rule 1 & 2 Temporary Injunction Plaint',
+      description: 'Comprehensive suit for permanent injunction and partition restraining encroachment and illegal transfer of ancestral land.',
+      sections: 'Order 39 Rules 1, 2 CPC & Sec 38 Specific Relief Act',
+      tags: ['Civil', 'Stay Order', 'Property Partition']
     },
     {
-      id: 'draft_3',
-      title: 'Application for Anticipatory Bail under Section 438 CrPC (BNSS Sec 482)',
-      category: 'Criminal Defence',
-      description: 'Comprehensive bail application before High Court/Sessions pleading false implication, cooperation with probe, and no flight risk.',
-      sections: 'Section 438 Code of Criminal Procedure / BNSS',
-      downloads: 530
+      id: 'db_3',
+      category: 'CRIMINAL_BAIL',
+      title: 'Anticipatory Bail Application (BNSS 482 / 438 CrPC)',
+      description: 'Ready petition for immediate anticipatory bail against politically motivated or matrimonial false FIRs before Sessions / High Court.',
+      sections: 'Sec 482 BNSS / 438 CrPC',
+      tags: ['Bail', 'Criminal Defence', 'Arrest Stay']
     },
     {
-      id: 'draft_4',
-      title: 'Statutory Demand Notice under Section 138 Negotiable Instruments Act',
-      category: 'Commercial & Recovery',
-      description: '15-day formal legal notice to drawer for bounced cheque with bank return memo and postal tracking record.',
-      sections: 'Section 138, 141 NI Act 1881',
-      downloads: 820
-    },
-    {
-      id: 'draft_5',
-      title: 'Joint Petition for Mutual Consent Divorce under Section 13B(1) HMA',
-      category: 'Matrimonial Law',
-      description: 'First motion joint petition with comprehensive settlement terms, waiver affidavit, and permanent alimony terms.',
-      sections: 'Section 13B(1) Hindu Marriage Act 1955',
-      downloads: 340
-    },
-    {
-      id: 'draft_6',
-      title: 'Memorandum of Second Appeal before State Information Commission (RTI)',
-      category: 'RTI & Transparency',
-      description: 'Appellate petition challenging PIO denial of public expenditure records, invoking Section 8(2) public interest override.',
-      sections: 'Section 19(3) Right to Information Act 2005',
-      downloads: 295
+      id: 'db_4',
+      category: 'COMMERCIAL_RECOVERY',
+      title: 'Section 138 Negotiable Instruments Act Legal Notice',
+      description: 'Statutory 15-day demand notice for dishonoured cheque with exact legal clauses and jurisdiction proof.',
+      sections: 'Sec 138 & 142 NI Act 1881',
+      tags: ['Cheque Bounce', 'Money Recovery', 'Notice']
     }
   ],
 
-  // Client Consultation Bookings / Time Slots
+  // Consultation Slots
   consultationSlots: [
     {
       id: 'slot_1',
-      clientId: 'usr_client_1',
       advocateId: 'usr_adv_1',
-      date: '04 Nov 2026',
-      time: '04:00 PM - 04:45 PM',
-      mode: 'Encrypted Video Consultation',
-      topic: 'High Court Writ Strategy & Interim Stay Discussion',
+      clientId: 'usr_client_1',
+      date: '2026-11-04',
+      time: '05:00 PM - 05:45 PM',
+      mode: 'Encrypted Video Conference',
+      topic: 'High Court Mandamus against illegal encroachment',
+      status: 'CONFIRMED'
+    },
+    {
+      id: 'slot_2',
+      advocateId: 'usr_adv_2',
+      clientId: 'usr_client_3',
+      date: '2026-11-05',
+      time: '02:30 PM - 03:15 PM',
+      mode: 'Direct Phone Call',
+      topic: 'NGT Stay on UPPCB Closure Notice',
       status: 'CONFIRMED'
     }
   ],
 
-  // Judgements
+  // Landmark Judgements
   judgements: [
     {
-      id: 'jdg_301',
-      advocateId: 'usr_adv_1',
-      title: 'High Court Mandamus to Demolish Corrupt Land Encroachment',
-      courtName: 'High Court of Judicature at Allahabad (Lucknow)',
-      citation: '2023 SCC OnLine All 1940',
-      summary: 'Directed the District Magistrate and Municipal Commissioner to remove unauthorized commercial structures on public land and recover costs from corrupt officials within 30 days.',
-      year: '2023',
-      category: 'High Court Writs'
+      id: 'jdg_1',
+      court: 'Supreme Court of India',
+      title: 'Re: Agricultural Land Title & Ex-Parte Injunctions',
+      citation: '2025 INSC 812',
+      summary: 'Held that long-standing possession cannot be disturbed without due process of law under Section 145 CrPC.',
+      fileUrl: '/uploads/judgement_supreme_court.pdf'
     },
     {
-      id: 'jdg_302',
-      advocateId: 'usr_adv_2',
-      title: 'NGT Stay on Unjustified Factory Closure & Pollution Penalty',
-      courtName: 'National Green Tribunal (Principal Bench, New Delhi)',
-      citation: '2024 NGT PB 118',
-      summary: 'Set aside arbitrary closure notice against an industrial unit, ruling that Pollution Control Boards cannot seal manufacturing plants without serving advance test reports.',
-      year: '2024',
-      category: 'NGT & Environment'
-    },
-    {
-      id: 'jdg_303',
-      advocateId: 'usr_adv_3',
-      title: 'Mutual Consent Divorce Decree & Full Financial Settlement in 6 Months',
-      courtName: 'Family Court, New Delhi',
-      citation: 'HMA Pet. 142/2023',
-      summary: 'Waived cooling-off period under Section 13B(2) Hindu Marriage Act and secured complete permanent alimony transfer within 180 days with mutual dignity.',
-      year: '2023',
-      category: 'Matrimonial & Divorce'
+      id: 'jdg_2',
+      court: 'High Court of Judicature at Allahabad',
+      title: 'Writ of Mandamus against Arbitrary Revenue Delay',
+      citation: '2026 AHC 1409',
+      summary: 'Directed Sub-Divisional Magistrate to decide mutation (Dakhil Kharij) within 45 days or face contempt proceedings.',
+      fileUrl: '/uploads/judgement_allahabad_hc.pdf'
     }
   ],
 
@@ -401,7 +339,251 @@ const initialData = {
   ],
 
   // Emergency Fast-Track Requests
-  emergencyRequests: []
+  emergencyRequests: [],
+
+  // 1. Milestone / Step-Based Escrow Model
+  milestonePlans: [
+    {
+      caseId: 'case_101',
+      caseTitle: 'Ancestral Property Encroachment & Mutation Stay',
+      advocateName: 'Adv. Rajeshwar Pandey',
+      totalAgreedFee: 25000,
+      currentPhase: 2,
+      accountabilityPledge: 'Paise har step par release honge jab vakil step poora karega. No Ghosting, 100% Accountability.',
+      phases: [
+        {
+          id: 'ms_1',
+          phaseNumber: 1,
+          title: 'Legal Consultation & Merits Analysis',
+          titleHi: 'कानूनी सलाह व केस मेरिट विश्लेषण',
+          amount: 2500,
+          status: 'RELEASED_TO_ADVOCATE',
+          deliverable: 'Conducted 45-minute video vetting of Jamabandi records and issued written Legal Feasibility Opinion.',
+          completedAt: '26 Oct 2026'
+        },
+        {
+          id: 'ms_2',
+          phaseNumber: 2,
+          title: 'Drafting, Legal Notice & Evidence Packaging',
+          titleHi: 'ड्राफ्टिंग, कानूनी नोटिस व साक्ष्य संकलन',
+          amount: 5500,
+          status: 'WORK_SUBMITTED',
+          deliverable: 'Completed Order 39 Injunction Plaint, Section 80 CPC Notice & indexed 14 revenue maps.',
+          submittedAt: '01 Nov 2026',
+          actionRequired: 'CLIENT_APPROVAL_PENDING'
+        },
+        {
+          id: 'ms_3',
+          phaseNumber: 3,
+          title: 'Court Filing & Case Registration (CNR Generation)',
+          titleHi: 'कोर्ट ई-फाइलिंग व CNR नंबर जनरेशन',
+          amount: 8000,
+          status: 'LOCKED_IN_ESCROW',
+          deliverable: 'Pending formal filing before Sub-Divisional Collector & Civil Judge Senior Division.',
+          expectedCNR: 'PBJL01-008921-2026'
+        },
+        {
+          id: 'ms_4',
+          phaseNumber: 4,
+          title: 'Arguments, Evidence & Final Order',
+          titleHi: 'बहस, साक्ष्य परीक्षण व अंतिम स्टे आदेश',
+          amount: 9000,
+          status: 'PENDING_DEPOSIT',
+          deliverable: 'Pending appearance on hearing date for interim demolition stay arguments.'
+        }
+      ]
+    }
+  ],
+
+  // 2. Crowdfunded PIL & Public Interest Pro-Bono Hub
+  pilCauses: [
+    {
+      id: 'pil_1',
+      title: 'Action Against Chemical Effluents in Gomti River Basin',
+      titleHi: 'गोमती नदी में औद्योगिक विषैले कचरे के विरुद्ध NGT याचिका',
+      category: 'ENVIRONMENT_NGT',
+      jurisdiction: 'National Green Tribunal (Principal Bench, New Delhi)',
+      targetAmount: 60000,
+      raisedAmount: 48500,
+      backersCount: 194,
+      leadAdvocate: 'Adv. Meenakshi Sundaram',
+      leadAdvocateBar: 'MAH/4921/2016',
+      leadAdvocateCourt: 'NGT Principal Bench & High Court',
+      description: 'Public litigation demanding immediate closure and environmental compensation from 18 chemical and leather units discharging untreated chromium into the freshwater supply of 12 downstream villages.',
+      descriptionHi: '12 गांवों के पेयजल को दूषित करने वाली 18 टेनरियों व केमिकल फैक्ट्रियों के विरुद्ध NGT प्रिंसिपल बेंच में तत्काल बंदी व हर्जाना याचिका।',
+      caseDiaryNo: 'NGT-PB-OA-2026-9041',
+      status: 'NOTICE_ISSUED_TO_SPCB',
+      statusBadge: 'Hearing Listed',
+      nextHearingDate: '18 Nov 2026',
+      courtUpdates: [
+        { date: '28 Oct 2026', text: 'NGT Bench directed State Pollution Control Board to submit inspection test report within 2 weeks.' },
+        { date: '15 Oct 2026', text: 'Original Application filed and admitted under Section 14 of the National Green Tribunal Act 2010.' }
+      ]
+    },
+    {
+      id: 'pil_2',
+      title: 'Restoration of 24 Bighas Encroached Gram Sabha Grazing Land',
+      titleHi: 'ग्राम सभा की 24 बीघा चारागाह व तालाब भूमि से अवैध कब्जा हटाना',
+      category: 'LAND_ENCROACHMENT',
+      jurisdiction: 'High Court of Judicature at Allahabad (Lucknow Bench)',
+      targetAmount: 45000,
+      raisedAmount: 39100,
+      backersCount: 247,
+      leadAdvocate: 'Adv. Rajeshwar Pandey',
+      leadAdvocateBar: 'D/1842/2011',
+      leadAdvocateCourt: 'Supreme Court & High Court',
+      description: 'Writ of Mandamus under Article 226 commanding District Magistrate and Revenue Tehsildar to demolish illegal boundary walls erected by local land syndicate over registered communal pond & pasture land (Gata No. 341 & 342).',
+      descriptionHi: 'ग्राम सभा के सार्वजनिक तालाब व चारागाह पर भू-माफियाओं के अवैध कब्जों को बुलडोजर से ढहाने हेतु हाईकोर्ट में परमादेश (Mandamus) जनहित याचिका।',
+      caseDiaryNo: 'HC-LKO-PIL-2026-1140',
+      status: 'COUNTER_AFFIDAVIT_CALLED',
+      statusBadge: 'Court Stay Granted',
+      nextHearingDate: '12 Nov 2026',
+      courtUpdates: [
+        { date: '24 Oct 2026', text: 'Hon’ble Division Bench granted status quo order, restraining any commercial construction on Gata 341.' },
+        { date: '10 Oct 2026', text: 'PIL registered and served upon Chief Secretary, Revenue Department, UP.' }
+      ]
+    },
+    {
+      id: 'pil_3',
+      title: 'Release of Withheld Wages of 340 Rural MNREGA Laborers',
+      titleHi: '340 ग्रामीण मनरेगा मजदूरों के बकाए मानदेय की अविलंब वसूली व जांच',
+      category: 'GOVT_CORRUPTION',
+      jurisdiction: 'High Court & Central Vigilance Commission (CVC)',
+      targetAmount: 35000,
+      raisedAmount: 35000,
+      backersCount: 312,
+      leadAdvocate: 'Adv. Anjali Deshmukh',
+      leadAdvocateBar: 'UP/6712/2015',
+      leadAdvocateCourt: 'High Court & Sessions Courts',
+      description: 'Public litigation exposing ghost muster rolls and systemic diversion of ₹1.82 Crore wages sanctioned for destitute rural women and senior laborers.',
+      descriptionHi: 'भ्रष्ट अधिकारियों द्वारा रोकी गई 1.82 करोड़ रुपये की मनरेगा मजदूरी तुरंत खातों में ट्रांसफर कराने हेतु सतर्कता जांच व जनहित याचिका।',
+      caseDiaryNo: 'HC-WRIT-2026-7819',
+      status: 'FULLY_FUNDED',
+      statusBadge: 'Funded & In Arguments',
+      nextHearingDate: '09 Nov 2026',
+      courtUpdates: [
+        { date: '30 Oct 2026', text: 'State Counsel directed to produce original bank payment logs by next hearing.' }
+      ]
+    }
+  ],
+
+  // 3. Verified Pan-India Advocates Directory & Monetization Desk
+  panIndiaAdvocates: [
+    {
+      id: 'adv_delhi_1',
+      fullName: 'Adv. Rajeshwar Pandey',
+      state: 'Delhi',
+      city: 'New Delhi',
+      barCouncilNo: 'D/1842/2011',
+      stateBarCouncil: 'Bar Council of Delhi',
+      courts: ['Supreme Court of India', 'Delhi High Court', 'National Company Law Tribunal'],
+      experienceYears: 16,
+      domains: ['High Court Writs', 'Property & Revenue', 'Anti-Corruption'],
+      landmarkJudgements: 'Sita Ram vs. State of UP (Land Title Restored); In Re: Mandamus on Delayed Pensions 2024',
+      rating: 4.9,
+      reviewsCount: 168,
+      timelyFilingRate: '99%',
+      consultationFee: 999,
+      avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150',
+      isVerifiedBar: true,
+      badge: 'Verified Senior Practitioner'
+    },
+    {
+      id: 'adv_up_1',
+      fullName: 'Adv. Anjali Deshmukh',
+      state: 'Uttar Pradesh',
+      city: 'Lucknow',
+      barCouncilNo: 'UP/6712/2015',
+      stateBarCouncil: 'Bar Council of Uttar Pradesh',
+      courts: ['Allahabad High Court (Lucknow Bench)', 'Sessions Court', 'Family Court'],
+      experienceYears: 10,
+      domains: ['Matrimonial & Divorce', 'Anticipatory Bail', 'RTI 2nd Appeals'],
+      landmarkJudgements: 'State vs. Gaurav (Bail granted in 48 hrs under BNSS 482); In Re: Public Procurement RTI Disclosure',
+      rating: 4.9,
+      reviewsCount: 142,
+      timelyFilingRate: '98%',
+      consultationFee: 799,
+      avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150',
+      isVerifiedBar: true,
+      badge: 'High Court Bail Specialist'
+    },
+    {
+      id: 'adv_mah_1',
+      fullName: 'Adv. Meenakshi Sundaram',
+      state: 'Maharashtra',
+      city: 'Mumbai',
+      barCouncilNo: 'MAH/4921/2016',
+      stateBarCouncil: 'Bar Council of Maharashtra & Goa',
+      courts: ['Bombay High Court', 'NGT Western Zone & Principal Bench', 'NCLT Mumbai'],
+      experienceYears: 11,
+      domains: ['NGT & Environment', 'Commercial & Recovery', 'IEC Export Clearance'],
+      landmarkJudgements: 'EcoWatch vs. Coastal Authority (CRZ Stay Upheld); Precision Metals vs. Union of India (DGFT Waiver)',
+      rating: 4.8,
+      reviewsCount: 119,
+      timelyFilingRate: '97%',
+      consultationFee: 1200,
+      avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150',
+      isVerifiedBar: true,
+      badge: 'Tribunal & NGT Counsel'
+    },
+    {
+      id: 'adv_mp_1',
+      fullName: 'Adv. Digvijay Singh Chouhan',
+      state: 'Madhya Pradesh',
+      city: 'Bhopal / Jabalpur',
+      barCouncilNo: 'MP/2819/2014',
+      stateBarCouncil: 'State Bar Council of Madhya Pradesh',
+      courts: ['High Court of Madhya Pradesh', 'Bhopal District & Sessions Court', 'State Administrative Tribunal'],
+      experienceYears: 12,
+      domains: ['Civil Land Partition', 'Govt Department Grievances', 'Criminal Trial'],
+      landmarkJudgements: 'Narmada Valley Farmers vs. Revenue Board (Demarcation Order Finalized)',
+      rating: 4.8,
+      reviewsCount: 94,
+      timelyFilingRate: '98%',
+      consultationFee: 850,
+      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
+      isVerifiedBar: true,
+      badge: 'Revenue & Civil Counsel'
+    },
+    {
+      id: 'adv_bihar_1',
+      fullName: 'Adv. Brijesh Kumar Sinha',
+      state: 'Bihar',
+      city: 'Patna',
+      barCouncilNo: 'BR/3910/2013',
+      stateBarCouncil: 'Bihar State Bar Council',
+      courts: ['Patna High Court', 'Patna Civil Court', 'Central Administrative Tribunal'],
+      experienceYears: 13,
+      domains: ['High Court Mandamus', 'Service Matters & Pensions', 'Land Encroachment'],
+      landmarkJudgements: 'Teachers Welfare Union vs. State of Bihar (Pay Scale Fixed by Writ Order)',
+      rating: 4.9,
+      reviewsCount: 108,
+      timelyFilingRate: '96%',
+      consultationFee: 750,
+      avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150',
+      isVerifiedBar: true,
+      badge: 'Patna High Court Counsel'
+    },
+    {
+      id: 'adv_punjab_1',
+      fullName: 'Adv. Gurinder Singh Dhillon',
+      state: 'Punjab',
+      city: 'Chandigarh',
+      barCouncilNo: 'P&H/5102/2012',
+      stateBarCouncil: 'Bar Council of Punjab & Haryana',
+      courts: ['Punjab & Haryana High Court', 'NRI Commission Punjab', 'District Court Mohali'],
+      experienceYears: 14,
+      domains: ['NRI Land Disputes', 'Cheque Bounce 138 NI Act', 'Anticipatory Bail'],
+      landmarkJudgements: 'Harpreet Singh (UK) vs. Encroachers (Illegal Sale Deed Cancelled by HC)',
+      rating: 5.0,
+      reviewsCount: 176,
+      timelyFilingRate: '100%',
+      consultationFee: 1500,
+      avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150',
+      isVerifiedBar: true,
+      badge: 'NRI Property Specialist'
+    }
+  ]
 };
 
 class Database {
@@ -435,6 +617,55 @@ class Database {
   getJudgements() { return this.load().judgements; }
   getPayments() { return this.load().payments; }
   getEmergencyRequests() { return this.load().emergencyRequests || []; }
+  getMilestonePlans() { return this.load().milestonePlans || initialData.milestonePlans; }
+  getPilCauses() { return this.load().pilCauses || initialData.pilCauses; }
+  getPanIndiaAdvocates() { return this.load().panIndiaAdvocates || initialData.panIndiaAdvocates; }
+
+  releaseMilestone(milestoneId) {
+    const data = this.load();
+    if (!data.milestonePlans) data.milestonePlans = initialData.milestonePlans;
+    for (const plan of data.milestonePlans) {
+      const phase = plan.phases.find(p => p.id === milestoneId);
+      if (phase) {
+        phase.status = 'RELEASED_TO_ADVOCATE';
+        phase.completedAt = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+        phase.actionRequired = null;
+        // Advance current phase if possible
+        const nextPhase = plan.phases.find(p => p.phaseNumber === phase.phaseNumber + 1);
+        if (nextPhase && nextPhase.status === 'PENDING_DEPOSIT') {
+          nextPhase.status = 'LOCKED_IN_ESCROW';
+        }
+        this.save(data);
+        return { success: true, phase, plan };
+      }
+    }
+    return { success: false, error: 'Milestone not found' };
+  }
+
+  contributeToPil(causeId, amount, citizenName) {
+    const data = this.load();
+    if (!data.pilCauses) data.pilCauses = initialData.pilCauses;
+    const cause = data.pilCauses.find(c => c.id === causeId);
+    if (cause) {
+      cause.raisedAmount += parseFloat(amount);
+      cause.backersCount += 1;
+      if (cause.raisedAmount >= cause.targetAmount) {
+        cause.status = 'FULLY_FUNDED';
+        cause.statusBadge = '100% Funded';
+      }
+      this.save(data);
+      return { success: true, cause };
+    }
+    return { success: false, error: 'Cause not found' };
+  }
+
+  addPilCause(causeData) {
+    const data = this.load();
+    if (!data.pilCauses) data.pilCauses = initialData.pilCauses;
+    data.pilCauses.unshift(causeData);
+    this.save(data);
+    return causeData;
+  }
 
   addCase(caseData) {
     const data = this.load();

@@ -352,6 +352,84 @@ app.post('/api/judgements', (req, res) => {
   res.status(201).json(newJudgement);
 });
 
+// 10. Milestone / Step-Based Escrow Model APIs
+app.get('/api/milestones', (req, res) => {
+  res.json(db.getMilestonePlans());
+});
+
+app.post('/api/milestones/:id/release', (req, res) => {
+  const result = db.releaseMilestone(req.params.id);
+  if (!result.success) {
+    return res.status(404).json(result);
+  }
+  res.json({
+    success: true,
+    message: 'Milestone approved and retainer portion released to advocate account!',
+    ...result
+  });
+});
+
+// 11. Crowdfunded PIL & Public Interest Pro-Bono Hub APIs
+app.get('/api/pil-causes', (req, res) => {
+  res.json(db.getPilCauses());
+});
+
+app.post('/api/pil-causes/:id/contribute', (req, res) => {
+  const { amount, contributorName } = req.body;
+  const result = db.contributeToPil(req.params.id, amount, contributorName);
+  if (!result.success) {
+    return res.status(404).json(result);
+  }
+  res.json({
+    success: true,
+    message: `Thank you for contributing ₹${amount} to public interest justice!`,
+    ...result
+  });
+});
+
+app.post('/api/pil-causes', (req, res) => {
+  const { title, titleHi, category, jurisdiction, targetAmount, description, leadAdvocate } = req.body;
+  const newPil = {
+    id: `pil_${Date.now()}`,
+    title,
+    titleHi: titleHi || title,
+    category: category || 'GOVT_CORRUPTION',
+    jurisdiction: jurisdiction || 'High Court of Judicature',
+    targetAmount: parseFloat(targetAmount) || 50000,
+    raisedAmount: 0,
+    backersCount: 1,
+    leadAdvocate: leadAdvocate || 'Empanelled Senior Advocate',
+    leadAdvocateBar: 'BCI/VERIFIED',
+    leadAdvocateCourt: jurisdiction || 'High Court',
+    description,
+    descriptionHi: description,
+    caseDiaryNo: `HC-PIL-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+    status: 'SUBMITTED_FOR_VETTING',
+    statusBadge: 'Citizen Grievance Vetted',
+    nextHearingDate: 'Registry Listing Pending',
+    courtUpdates: [
+      { date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }), text: 'Public interest issue verified by NRF pro-bono desk. Opened for citizen backing.' }
+    ]
+  };
+  db.addPilCause(newPil);
+  res.status(201).json(newPil);
+});
+
+// 12. Verified Pan-India Advocates Directory & Monetization Desk APIs
+app.get('/api/advocates-directory', (req, res) => {
+  const { state, court } = req.query;
+  let advocates = db.getPanIndiaAdvocates();
+
+  if (state && state !== 'ALL') {
+    advocates = advocates.filter(a => a.state.toLowerCase() === state.toLowerCase());
+  }
+  if (court && court !== 'ALL') {
+    advocates = advocates.filter(a => a.courts.some(c => c.toLowerCase().includes(court.toLowerCase())));
+  }
+
+  res.json(advocates);
+});
+
 // Start Server
 app.listen(PORT, () => {
   console.log(`=======================================================`);
