@@ -1,0 +1,157 @@
+/* NRF Legal Platform - Rich Dark Navy Corporate Theme */
+:root {
+  --bg-base: #060B13;           /* Ultra-Deep Navy Canvas */
+  --bg-surface: #0B132B;        /* Secondary Dark Slate Section */
+  --navy-header: #0A1120;       /* Sticky Header Dark Navy */
+  --navy-card: #0F172A;         /* Primary Card Surface */
+  --navy-card-inner: #111C35;   /* Elevated Card / Input Surface */
+  --navy-card-border: #1E293B;  /* Subtle Corporate Border */
+  --navy-border-hover: #334155; /* Interactive Border */
+
+  --text-primary: #FFFFFF;      /* 100% Crisp Pure White */
+  --text-secondary: #CBD5E1;    /* High-contrast readable off-white */
+  --text-muted: #94A3B8;        /* Clear slate description */
+  --text-faint: #64748B;
+
+  --champagne: #C5A880;         /* Muted Champagne Gold */
+  --champagne-light: #E2C799;   /* Bright Champagne Gold for Text & Accents */
+  --champagne-dark: #A58963;
+
+  --crimson: #BE123C;           /* Balanced Wine Red / Crimson */
+  --crimson-soft: #1F0810;      /* Dark Crimson Tint for Banner */
+  --emerald-green: #10B981;     /* Soft Professional Green */
+  --emerald-soft: #052319;
+}
+
+body {
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* Institutional Dark Card Styling */
+.firm-card {
+  background-color: var(--navy-card);
+  border: 1px solid var(--navy-card-border);
+  border-radius: 1.25rem;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.45);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.firm-card:hover {
+  border-color: var(--navy-border-hover);
+  box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.65);
+  transform: translateY(-2px);
+}
+
+/* Header & Navigation Link Visibility Fixes */
+.nav-link {
+  color: #F1F5F9 !important;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  letter-spacing: 0.01em;
+  transition: all 0.2s ease;
+}
+
+.nav-link:hover {
+  color: var(--champagne-light) !important;
+}
+
+/* Monogram & Champagne Accents */
+.champagne-gradient-text {
+  background: linear-gradient(135deg, #F5EFE6 0%, #E2C799 50%, #C5A880 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.champagne-badge {
+  background-color: rgba(226, 199, 153, 0.12);
+  color: var(--champagne-light);
+  border: 1px solid rgba(226, 199, 153, 0.3);
+  font-weight: 600;
+}
+
+.champagne-badge-active {
+  background-color: rgba(226, 199, 153, 0.2);
+  color: #FFFFFF;
+  border: 1px solid var(--champagne-light);
+  font-weight: 700;
+}
+
+/* Champagne Gold Button */
+.btn-champagne {
+  background: linear-gradient(135deg, #E2C799 0%, #C5A880 100%);
+  color: #0A1120 !important;
+  font-weight: 800;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 10px rgba(197, 168, 128, 0.25);
+}
+
+.btn-champagne:hover {
+  background: linear-gradient(135deg, #F0DBB8 0%, #D4B489 100%);
+  box-shadow: 0 8px 24px -4px rgba(226, 199, 153, 0.45);
+  transform: translateY(-1px);
+}
+
+/* Switcher Buttons (Language & Role) */
+.switch-btn-active {
+  background: linear-gradient(135deg, #E2C799 0%, #C5A880 100%) !important;
+  color: #0A1120 !important;
+  font-weight: 800 !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.switch-btn-inactive {
+  background: transparent !important;
+  color: #F1F5F9 !important;
+  font-weight: 600 !important;
+}
+
+.switch-btn-inactive:hover {
+  color: #FFFFFF !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Balanced Crimson Emergency Pill */
+.crimson-pill {
+  background-color: var(--crimson);
+  color: #FFFFFF;
+  transition: all 0.2s ease;
+}
+
+.crimson-pill:hover {
+  background-color: #9F1239;
+  box-shadow: 0 6px 20px -2px rgba(190, 18, 60, 0.5);
+  transform: translateY(-1px);
+}
+
+/* Professional Emerald WhatsApp Pill */
+.emerald-pill {
+  background-color: var(--emerald-green);
+  color: #FFFFFF;
+  transition: all 0.2s ease;
+}
+
+.emerald-pill:hover {
+  background-color: #059669;
+  box-shadow: 0 6px 20px -2px rgba(16, 185, 129, 0.5);
+  transform: translateY(-1px);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #060B13;
+}
+::-webkit-scrollbar-thumb {
+  background: #1E293B;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
