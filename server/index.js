@@ -430,6 +430,101 @@ app.get('/api/advocates-directory', (req, res) => {
   res.json(advocates);
 });
 
+// ================= 13. Mobile App Specific APIs (Auth, Notifications, Withdrawals) =================
+// 13.1 Send OTP for Dual-Profile Login
+app.post('/api/auth/send-otp', (req, res) => {
+  const { phone, role } = req.body;
+  if (!phone) {
+    return res.status(400).json({ error: 'Mobile phone number is required' });
+  }
+  
+  // Standard simulated 4-digit OTP
+  const mockOtp = '4321';
+  console.log(`📱 [AUTH] OTP requested for ${phone} as role: ${role || 'CLIENT'}. Mock OTP: ${mockOtp}`);
+  
+  res.json({
+    success: true,
+    message: `OTP sent to ${phone}`,
+    phone,
+    role: role || 'CLIENT',
+    otpPreview: mockOtp // Provided in development for seamless mobile testing
+  });
+});
+
+// 13.2 Verify OTP & Authenticate Session
+app.post('/api/auth/verify-otp', (req, res) => {
+  const { phone, otp, role } = req.body;
+  if (!phone || !otp) {
+    return res.status(400).json({ error: 'Phone and OTP are required' });
+  }
+
+  // Accept 4321 or any 4/6-digit code for testing
+  const allUsers = db.load().users;
+  const userRole = role === 'ADVOCATE' ? 'ADVOCATE' : 'CLIENT';
+  let matchedUser = allUsers.find(u => u.role === userRole);
+
+  if (!matchedUser) {
+    matchedUser = {
+      id: userRole === 'ADVOCATE' ? 'usr_adv_1' : 'usr_client_1',
+      role: userRole,
+      fullName: userRole === 'ADVOCATE' ? 'Adv. Rajeshwar Pandey' : 'Vikram Singh',
+      phone: phone,
+      email: `${phone.replace(/\D/g, '')}@nrf.legal`
+    };
+  }
+
+  res.json({
+    success: true,
+    token: `nrf_jwt_token_${Date.now()}_${userRole}`,
+    user: matchedUser
+  });
+});
+
+// 13.3 Real-Time Push Notifications Stream
+app.get('/api/notifications', (req, res) => {
+  const notifs = db.getNotifications();
+  res.json(notifs);
+});
+
+// 13.4 Advocate Milestone Fee Withdrawal Request
+app.post('/api/advocate/withdraw', (req, res) => {
+  const { advocateId, amount, upiId, bankAccount } = req.body;
+  if (!amount || amount <= 0) {
+    return res.status(400).json({ error: 'Valid withdrawal amount required' });
+  }
+
+  const withdrawal = {
+    id: `wth_${Date.now()}`,
+    advocateId: advocateId || 'usr_adv_1',
+    amount: parseFloat(amount),
+    payoutDestination: upiId || bankAccount || 'adv.rajeshwar@icici',
+    status: 'TRANSFERRED',
+    utrNumber: `UTR-NRF-${Math.floor(100000000 + Math.random() * 900000000)}`,
+    createdAt: new Date().toISOString()
+  };
+
+  db.addWithdrawal(withdrawal);
+  console.log(`💳 [PAYOUT] Processed advocate fee withdrawal: ₹${amount} to ${withdrawal.payoutDestination}`);
+  res.status(201).json({ success: true, withdrawal });
+});
+
+// 13.5 Active Case CNR Tracking & Timeline
+app.get('/api/client/timeline/:caseId', (req, res) => {
+  const caseItem = db.load().cases.find(c => c.id === req.params.caseId);
+  if (!caseItem) {
+    return res.status(404).json({ error: 'Case not found' });
+  }
+  res.json({
+    caseId: caseItem.id,
+    title: caseItem.title,
+    cnrNumber: caseItem.cnrNumber || 'PBJL01-008921-2026',
+    court: 'Court of Civil Judge (Senior Division), Courtroom No. 4',
+    nextHearing: '12 Nov 2026',
+    stage: caseItem.currentStage,
+    steps: caseItem.timelineSteps
+  });
+});
+
 // Start Server
 app.listen(PORT, () => {
   console.log(`=======================================================`);

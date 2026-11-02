@@ -1,0 +1,40 @@
+{
+  "expo": {
+    "name": "NRF Saathi",
+    "slug": "nrf-saathi",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#060B13"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "org.nyayrakshak.saathi"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#060B13"
+      },
+      "package": "org.nyayrakshak.saathi",
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "NOTIFICATIONS"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "scheme": "nrf",
+    "extra": {
+      "apiUrl": "https://nrfsathi.onrender.com/api",
+      "localApiUrl": "http://10.0.2.2:4000/api"
+    }
+  }
+}

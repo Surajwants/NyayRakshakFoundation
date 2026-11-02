@@ -728,6 +728,75 @@ class Database {
     this.save(data);
     return userData;
   }
+
+  getNotifications() {
+    const data = this.load();
+    if (!data.notifications || data.notifications.length === 0) {
+      data.notifications = [
+        {
+          id: 'notif_1',
+          type: 'HEARING_ALERT',
+          title: 'Court Date Reminder (तारीख अलर्ट)',
+          body: 'Hearing on 12 Nov for Case PBJL01-008921-2026 before Civil Judge (Sr Div) Court 4.',
+          caseId: 'case_101',
+          time: '10 mins ago',
+          urgent: true
+        },
+        {
+          id: 'notif_2',
+          type: 'MILESTONE_RELEASE',
+          title: 'Milestone 2 Approved (फीस रिलीज)',
+          body: 'Client released ₹5,500 escrow fee for Drafting & Notice packaging deliverable.',
+          caseId: 'case_101',
+          time: '2 hours ago',
+          urgent: false
+        },
+        {
+          id: 'notif_3',
+          type: 'PIL_UPDATE',
+          title: 'Jan-Hit Gomti River PIL Update',
+          body: 'NGT Principal Bench ordered State Pollution Control Board inspection. Next date: 18 Nov.',
+          caseId: 'pil_1',
+          time: 'Yesterday',
+          urgent: false
+        },
+        {
+          id: 'notif_4',
+          type: 'EMERGENCY_DISPATCH',
+          title: '24x7 SOS Team Assigned',
+          body: 'Emergency stay team dispatched. Counsel Adv. Rajeshwar Pandey reviewing file.',
+          caseId: 'case_102',
+          time: '2 days ago',
+          urgent: true
+        }
+      ];
+      this.save(data);
+    }
+    return data.notifications;
+  }
+
+  addNotification(notif) {
+    const data = this.load();
+    if (!data.notifications) data.notifications = [];
+    data.notifications.unshift(notif);
+    this.save(data);
+    return notif;
+  }
+
+  addWithdrawal(wData) {
+    const data = this.load();
+    if (!data.withdrawals) data.withdrawals = [];
+    data.withdrawals.unshift(wData);
+    this.save(data);
+    return wData;
+  }
+
+  getWithdrawals(advocateId) {
+    const data = this.load();
+    if (!data.withdrawals) return [];
+    if (advocateId) return data.withdrawals.filter(w => w.advocateId === advocateId);
+    return data.withdrawals;
+  }
 }
 
 module.exports = new Database();
