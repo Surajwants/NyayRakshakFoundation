@@ -108,6 +108,7 @@ const i18n = {
     btnEmergencyNav: "24x7 SOS Helpline",
     roleLabelClient: "Client",
     roleLabelAdvocate: "Advocate",
+    reassuranceHeadline: '"Kanoon se dariye mat, kanoon aapke sath hai. Har adalat, har shehar — aapka apna vakil aapke sath."',
     heroMainHeading: '"Kanoon se dariye mat, <span class=\"champagne-gradient-text\">kanoon aapke sath hai.</span> Har adalat, har shehar — aapka apna vakil aapke sath."',
     heroShieldTag: "Bar Council of India Rule 36 Compliant • Encrypted Client-Attorney Privilege",
     heroSub: "From High Court Mandamus petitions and NGT industrial clearances to property mutations and anticipatory bail — consult verified advocates across India and globally.",
@@ -146,6 +147,7 @@ const i18n = {
     btnEmergencyNav: "24x7 SOS हेल्पलाइन",
     roleLabelClient: "नागरिक",
     roleLabelAdvocate: "वकील",
+    reassuranceHeadline: '"कानून से डरिए मत, कानून आपके साथ है। हर अदालत, हर शहर — आपका अपना वकील आपके साथ।"',
     heroMainHeading: '"कानून से डरिए मत, <span class=\"champagne-gradient-text\">कानून आपके साथ है।</span> हर अदालत, हर शहर — आपका अपना वकील आपके साथ।"',
     heroShieldTag: "बार काउंसिल ऑफ इंडिया नियम 36 सम्मत • 256-बिट सुरक्षित गोपनीयता",
     heroSub: "हाई कोर्ट रिट याचिका से लेकर उद्योग एनजीटी, पुश्तैनी ज़मीन, आरटीआई, और अग्रिम ज़मानत — देश-विदेश के सत्यापित वकीलों से तुरंत सलाह लें।",
@@ -250,6 +252,9 @@ function applyTranslations() {
 
   const heroHeadingEl = document.getElementById('heroMainHeading');
   if (heroHeadingEl) heroHeadingEl.innerHTML = t('heroMainHeading');
+
+  const reassureEl = document.getElementById('reassuranceHeadline');
+  if (reassureEl) reassureEl.innerText = t('reassuranceHeadline');
 
   document.getElementById('heroShieldTag').innerText = t('heroShieldTag');
   document.getElementById('heroSub').innerText = t('heroSub');
