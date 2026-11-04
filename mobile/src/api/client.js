@@ -95,6 +95,17 @@ export const api = {
     })
   },
 
+  // National Judicial & Quasi-Judicial Integration Grid (Courts, Tribunals, Commissions, Ombudsman)
+  judicial: {
+    getInstitutions: () => request('/judicial/institutions'),
+    lookupDocket: (query) => request(`/judicial/lookup?query=${encodeURIComponent(query)}`),
+    getMultiCourtCauseList: () => request('/judicial/multi-court-causelist'),
+    trackCase: (data) => request('/judicial/track-case', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    })
+  },
+
   // Real-Time Notifications
   notifications: {
     getAll: () => request('/notifications')

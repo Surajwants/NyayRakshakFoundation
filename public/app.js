@@ -132,7 +132,12 @@ const i18n = {
     alertCaseSaved: "Matter registered in vault successfully!",
     alertEmergencySent: "Emergency SOS dispatched! Senior advocate team notified under 120-minute SLA.",
     alertSlotBooked: "Consultation slot booked successfully!",
-    alertProposalSent: "Proposal delivered to client securely!"
+    alertProposalSent: "Proposal delivered to client securely!",
+    navTextJudicial: "Judicial Grid",
+    judicialBadge: "National Judicial & Quasi-Judicial Integration Grid • अखिल भारतीय एकीकृत न्यायिक व अधिकरण नेटवर्क",
+    judicialHeading: "Supreme Court, 25 High Courts, 672+ District Courts, Tribunals, RTI & Ombudsman Network",
+    judicialSubhead: "Search any 16-character CNR, High Court case, National Green Tribunal (NGT) docket, NCLT corporate petition, Central Information Commission (CIC) RTI appeal, or Banking/RERA ombudsman complaint directly from the verified national registry.",
+    btnTextJudicialSearch: "Verify & Resolve Docket"
   },
   hi: {
     navSub: "न्यायरक्षक फाउंडेशन • देशव्यापी विधिक सहायता व कोर्ट नेटवर्क",
@@ -171,7 +176,12 @@ const i18n = {
     alertCaseSaved: "केस सुरक्षित वॉल्ट में दर्ज हो गया है!",
     alertEmergencySent: "आपातकालीन SOS दर्ज! वरिष्ठ अधिवक्ता टीम 2 घंटे के भीतर संपर्क करेगी।",
     alertSlotBooked: "परामर्श स्लॉट सफलतापूर्वक बुक हो गया!",
-    alertProposalSent: "प्रस्ताव क्लाइंट को सुरक्षित भेज दिया गया!"
+    alertProposalSent: "प्रस्ताव क्लाइंट को सुरक्षित भेज दिया गया!",
+    navTextJudicial: "अदालत नेटवर्क",
+    judicialBadge: "राष्ट्रीय न्यायिक व अर्द्ध-न्यायिक एकीकरण ग्रिड • सर्वोच्च न्यायालय, उच्च न्यायालय, ट्रिब्यूनल व आयोग",
+    judicialHeading: "सुप्रीम कोर्ट, सभी 25 हाई कोर्ट, 672+ जिला अदालतें, एनजीटी, एनसीएलटी, आरटीआई व ओम्बड्समैन नेटवर्क",
+    judicialSubhead: "किसी भी 16-अंकीय सीएनआर (CNR), हाई कोर्ट वाद, राष्ट्रीय हरित अधिकरण (NGT), एनसीएलटी दिवालिया याचिका, केंद्रीय सूचना आयोग (CIC) अपील, या बैंकिंग व रेरा शिकायत को सीधे आधिकारिक रजिस्ट्री से लाइव खोजें।",
+    btnTextJudicialSearch: "केस रिकॉर्ड सत्यापित करें"
   }
 };
 
@@ -191,6 +201,18 @@ let state = {
   milestonePlans: [],
   pilCauses: [],
   panIndiaAdvocates: [],
+  judicialData: {
+    supremeCourt: null,
+    highCourts: [],
+    districtCourtsSystem: null,
+    tribunals: [],
+    rtiCommissions: [],
+    statutoryCommissions: [],
+    ombudsmenAndRegulators: []
+  },
+  activeJudicialTab: 'SUPREME_COURT',
+  currentResolvedDocket: null,
+  multiCourtCauseList: [],
   selectedStateFilter: 'ALL',
   selectedCourtFilter: 'ALL',
   selectedDomainFilter: 'ALL',
@@ -224,6 +246,7 @@ function setLanguage(lang) {
 
   applyTranslations();
   renderPracticeAreas();
+  renderJudicialInstitutions(state.activeJudicialTab || 'SUPREME_COURT');
   renderMilestoneSystem();
   renderPilCauses();
   renderAdvocatesDirectory();
@@ -278,6 +301,17 @@ function applyTranslations() {
   document.getElementById('portalSubhead').innerText = t('portalSubhead');
   document.getElementById('portalHeading').innerText = t('portalHeading');
   document.getElementById('portalDesc').innerText = t('portalDesc');
+
+  const navJudicialEl = document.getElementById('navTextJudicial');
+  if (navJudicialEl) navJudicialEl.innerText = t('navTextJudicial');
+  const judBadgeEl = document.getElementById('judicialBadge');
+  if (judBadgeEl) judBadgeEl.innerText = t('judicialBadge');
+  const judHeadEl = document.getElementById('judicialHeading');
+  if (judHeadEl) judHeadEl.innerText = t('judicialHeading');
+  const judSubEl = document.getElementById('judicialSubhead');
+  if (judSubEl) judSubEl.innerText = t('judicialSubhead');
+  const btnJudSearchEl = document.getElementById('btnTextJudicialSearch');
+  if (btnJudSearchEl) btnJudSearchEl.innerText = t('btnTextJudicialSearch');
 }
 
 // App Initialization
@@ -285,6 +319,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   setLanguage(state.currentLang);
   await loadInitialData();
   renderPracticeAreas();
+  renderJudicialInstitutions(state.activeJudicialTab || 'SUPREME_COURT');
   renderMilestoneSystem();
   renderPilCauses();
   renderAdvocatesDirectory();
@@ -294,7 +329,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 // Load Live Data from Server
 async function loadInitialData() {
   try {
-    const [usersRes, casesRes, bidsRes, causeRes, draftRes, slotsRes, payRes, jdgRes, msRes, pilRes, advRes] = await Promise.all([
+    const [usersRes, casesRes, bidsRes, causeRes, draftRes, slotsRes, payRes, jdgRes, msRes, pilRes, advRes, judicialRes, multiCauseRes] = await Promise.all([
       fetch(`${API_BASE}/users`),
       fetch(`${API_BASE}/cases`),
       fetch(`${API_BASE}/bids`),
@@ -305,7 +340,9 @@ async function loadInitialData() {
       fetch(`${API_BASE}/judgements`),
       fetch(`${API_BASE}/milestones`),
       fetch(`${API_BASE}/pil-causes`),
-      fetch(`${API_BASE}/advocates-directory`)
+      fetch(`${API_BASE}/advocates-directory`),
+      fetch(`${API_BASE}/judicial/institutions`),
+      fetch(`${API_BASE}/judicial/multi-court-causelist`)
     ]);
 
     state.allUsers = await usersRes.json();
@@ -318,6 +355,8 @@ async function loadInitialData() {
     state.milestonePlans = await msRes.json();
     state.pilCauses = await pilRes.json();
     state.panIndiaAdvocates = await advRes.json();
+    state.judicialData = await judicialRes.json();
+    state.multiCourtCauseList = await multiCauseRes.json();
 
     const defaultUser = state.allUsers.find(u => u.role === 'CLIENT') || state.allUsers[0];
     applyUser(defaultUser);
@@ -332,6 +371,8 @@ async function loadInitialData() {
     renderMilestoneSystem();
     renderPilCauses();
     renderAdvocatesDirectory();
+    renderJudicialInstitutions(state.activeJudicialTab || 'SUPREME_COURT');
+    renderMultiCourtCauseList();
   } catch (err) {
     console.error('Data load error', err);
   }
@@ -1363,4 +1404,484 @@ function selectUser(userId) {
 function escapeHtml(str) {
   if (!str) return '';
   return str.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+}
+
+// ================= 14. National Judicial & Quasi-Judicial Integration Functions =================
+function switchJudicialTab(tabKey) {
+  state.activeJudicialTab = tabKey;
+  
+  const buttons = document.querySelectorAll('.judicial-tab-btn');
+  buttons.forEach(btn => {
+    btn.className = 'judicial-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition shrink-0 bg-[#0F172A] text-slate-300 hover:text-white border border-slate-700';
+  });
+
+  const activeBtn = document.getElementById(`tab_btn_${tabKey}`);
+  if (activeBtn) {
+    activeBtn.className = 'judicial-tab-btn active px-4 py-2 rounded-xl text-xs font-bold transition shrink-0 bg-[#E2C799] text-[#060B13] shadow-md';
+  }
+
+  renderJudicialInstitutions(tabKey);
+}
+
+function renderJudicialInstitutions(tabKey) {
+  const container = document.getElementById('judicialInstitutionsGrid');
+  if (!container) return;
+
+  const data = state.judicialData || {};
+  let cardsHtml = '';
+
+  if (tabKey === 'SUPREME_COURT') {
+    const sc = data.supremeCourt;
+    if (!sc) {
+      container.innerHTML = `<div class="col-span-full py-8 text-center text-xs text-slate-400">Loading Supreme Court Gateway...</div>`;
+      return;
+    }
+
+    cardsHtml = `
+      <div class="col-span-full firm-card p-6 bg-gradient-to-r from-[#0F172A] via-[#111C35] to-[#0A1120] border border-[#C5A880]/50 rounded-3xl space-y-5">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div class="flex items-center space-x-3.5">
+            <div class="w-14 h-14 rounded-2xl bg-[#E2C799]/15 border border-[#C5A880]/40 flex items-center justify-center text-[#E2C799] shrink-0 text-2xl font-bold">
+              ⚖️
+            </div>
+            <div>
+              <div class="flex items-center space-x-2">
+                <span class="text-[10px] bg-amber-950/80 text-[#E2C799] border border-[#C5A880]/30 px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider">
+                  Apex Constitutional Court of India
+                </span>
+                <span class="text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded-full font-bold">
+                  Verified e-Filing 3.0
+                </span>
+              </div>
+              <h3 class="text-xl sm:text-2xl font-extrabold text-white mt-1">${sc.name}</h3>
+              <p class="text-xs text-slate-300">${sc.location} • National Jurisdiction</p>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-2">
+            <a href="${sc.officialPortal}" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-xl bg-[#060B13] border border-slate-700 hover:border-[#E2C799] text-xs font-bold text-slate-200 hover:text-white flex items-center space-x-1.5 transition">
+              <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+              <span>sci.gov.in</span>
+            </a>
+            <a href="${sc.eFilingPortal}" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-xl btn-champagne text-xs font-bold flex items-center space-x-1.5 transition">
+              <i data-lucide="upload-cloud" class="w-3.5 h-3.5"></i>
+              <span>Supreme Court e-Filing</span>
+            </a>
+          </div>
+        </div>
+
+        <p class="text-xs text-slate-300 leading-relaxed max-w-4xl">${sc.description}</p>
+
+        <!-- Services Strip -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
+          <a href="${sc.caseStatusUrl}" target="_blank" rel="noopener noreferrer" class="p-3 rounded-2xl bg-[#060B13]/80 border border-slate-800 hover:border-[#E2C799]/50 transition group">
+            <div class="text-[11px] font-bold text-[#E2C799] group-hover:text-white flex items-center justify-between">
+              <span>Case Status & Daily Orders</span>
+              <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+            </div>
+            <div class="text-[10px] text-slate-400 mt-1">Diary No / CNR / Party Search</div>
+          </a>
+          <a href="${sc.causeListUrl}" target="_blank" rel="noopener noreferrer" class="p-3 rounded-2xl bg-[#060B13]/80 border border-slate-800 hover:border-[#E2C799]/50 transition group">
+            <div class="text-[11px] font-bold text-[#E2C799] group-hover:text-white flex items-center justify-between">
+              <span>Daily Cause Lists</span>
+              <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+            </div>
+            <div class="text-[10px] text-slate-400 mt-1">Courts 1-17 Listed Matters Today</div>
+          </a>
+          <a href="${sc.judgmentsPortal}" target="_blank" rel="noopener noreferrer" class="p-3 rounded-2xl bg-[#060B13]/80 border border-slate-800 hover:border-[#E2C799]/50 transition group">
+            <div class="text-[11px] font-bold text-[#E2C799] group-hover:text-white flex items-center justify-between">
+              <span>Digi-SCR Law Reports</span>
+              <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+            </div>
+            <div class="text-[10px] text-slate-400 mt-1">Free 36,000+ Verified Judgments</div>
+          </a>
+          <div onclick="setAndQueryDocket('SCIN01-002841-2026')" class="p-3 rounded-2xl bg-[#060B13]/80 border border-amber-800/40 hover:border-[#E2C799] cursor-pointer transition group">
+            <div class="text-[11px] font-bold text-[#E2C799] group-hover:text-white flex items-center justify-between">
+              <span>Test Live SC Docket</span>
+              <i data-lucide="search" class="w-3.5 h-3.5"></i>
+            </div>
+            <div class="text-[10px] text-slate-400 mt-1">Load SCIN01-002841-2026</div>
+          </div>
+        </div>
+      </div>
+    `;
+  } else if (tabKey === 'HIGH_COURTS') {
+    const list = data.highCourts || [];
+    cardsHtml = list.map(hc => `
+      <div class="firm-card p-5 bg-[#0F172A] border border-slate-800 hover:border-[#C5A880]/50 rounded-2xl space-y-3.5 transition flex flex-col justify-between">
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] bg-[#E2C799]/15 text-[#E2C799] border border-[#C5A880]/30 px-2 py-0.5 rounded-full font-bold">
+              CNR: ${hc.cnrPrefix}
+            </span>
+            <span class="text-[10px] text-slate-400 font-mono">${hc.state}</span>
+          </div>
+          <h4 class="text-sm font-bold text-white leading-snug">${hc.name}</h4>
+          <div class="text-[11px] text-[#E2C799] font-medium">${hc.nameHi || ''}</div>
+          <div class="text-[11px] text-slate-400 space-y-0.5">
+            ${hc.benches.map(b => `<div class="truncate">• ${b}</div>`).join('')}
+          </div>
+        </div>
+
+        <div class="pt-3 border-t border-slate-800 flex items-center justify-between gap-2">
+          <a href="${hc.officialPortal}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1.5 rounded-xl bg-[#060B13] border border-slate-700 hover:border-[#E2C799] text-[11px] font-bold text-slate-300 hover:text-white flex items-center space-x-1 transition">
+            <i data-lucide="external-link" class="w-3 h-3"></i>
+            <span>Portal</span>
+          </a>
+          <a href="${hc.causeListUrl}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1.5 rounded-xl bg-[#060B13] border border-slate-700 hover:border-[#E2C799] text-[11px] font-bold text-[#E2C799] flex items-center space-x-1 transition">
+            <i data-lucide="calendar" class="w-3 h-3"></i>
+            <span>Cause List</span>
+          </a>
+          <button onclick="setAndQueryDocket('${hc.cnrPrefix}01-014529-2026')" class="px-2.5 py-1.5 rounded-xl btn-champagne text-[11px] font-bold flex items-center space-x-1 transition">
+            <i data-lucide="search" class="w-3 h-3"></i>
+            <span>Search</span>
+          </button>
+        </div>
+      </div>
+    `).join('');
+  } else if (tabKey === 'DISTRICT_COURTS') {
+    const dc = data.districtCourtsSystem;
+    const sampleClusters = [
+      { state: 'Delhi NCR', districts: '11 Districts (Patiala House, Tis Hazari, Saket, Rohini, Karkardooma, Dwarka, Rouse Avenue)' },
+      { state: 'Uttar Pradesh', districts: '75 Districts (Lucknow, Kanpur, Gautam Buddha Nagar Noida, Varanasi, Prayagraj, Meerut)' },
+      { state: 'Maharashtra', districts: '36 Districts (Mumbai City, Mumbai Suburban, Pune, Nagpur, Thane, Nashik)' },
+      { state: 'Punjab & Haryana', districts: '23 Districts Punjab + 22 Districts Haryana (Jalandhar, Ludhiana, Gurugram, Faridabad)' },
+      { state: 'Bihar', districts: '38 Districts (Patna, Gaya, Muzaffarpur, Bhagalpur, Darbhanga)' },
+      { state: 'Karnataka & Tamil Nadu', districts: 'Bengaluru Urban & Rural, Chennai City Civil, Coimbatore, Madurai' }
+    ];
+
+    cardsHtml = `
+      <div class="col-span-full firm-card p-6 bg-gradient-to-r from-[#0B132B] to-[#0F172A] border border-[#C5A880]/50 rounded-3xl space-y-5">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+          <div class="space-y-1">
+            <div class="flex items-center space-x-2">
+              <span class="text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded-full font-bold uppercase">
+                672+ District Establishments Connected
+              </span>
+              <span class="text-[10px] bg-amber-950 text-[#E2C799] border border-amber-800 px-2 py-0.5 rounded-full font-bold">
+                16-Char CNR Standard
+              </span>
+            </div>
+            <h3 class="text-xl sm:text-2xl font-extrabold text-white">${dc ? dc.name : 'National eCourts District Network'}</h3>
+            <p class="text-xs text-slate-300">Under the e-Courts Integrated Mission Mode Project (Hon'ble e-Committee, Supreme Court of India)</p>
+          </div>
+
+          <div class="flex gap-2">
+            <a href="${dc ? dc.officialPortal : 'https://services.ecourts.gov.in'}" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-xl btn-champagne text-xs font-bold flex items-center space-x-1.5 transition">
+              <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+              <span>services.ecourts.gov.in</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- 16-Char Explanation Strip -->
+        <div class="p-4 rounded-2xl bg-[#060B13] border border-slate-700/80 space-y-2 text-xs">
+          <div class="font-bold text-[#E2C799] flex items-center space-x-1.5">
+            <i data-lucide="info" class="w-4 h-4"></i>
+            <span>Understanding 16-Character CNR Format (अदालती सीएनआर नंबर कैसे पहचानें):</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 text-[11px] text-slate-300">
+            <div class="p-2 rounded-xl bg-[#0F172A] border border-slate-800">
+              <span class="font-bold text-[#E2C799] block font-mono">1. PB (State Code)</span>
+              <span>2 letters indicate state (e.g. PB = Punjab, DL = Delhi, UP = Uttar Pradesh)</span>
+            </div>
+            <div class="p-2 rounded-xl bg-[#0F172A] border border-slate-800">
+              <span class="font-bold text-[#E2C799] block font-mono">2. JL (District Court)</span>
+              <span>2 letters indicate District Court establishment (JL = Jalandhar)</span>
+            </div>
+            <div class="p-2 rounded-xl bg-[#0F172A] border border-slate-800">
+              <span class="font-bold text-[#E2C799] block font-mono">3. 01 (Court Complex)</span>
+              <span>2 digits indicate sub-division / court complex code</span>
+            </div>
+            <div class="p-2 rounded-xl bg-[#0F172A] border border-slate-800">
+              <span class="font-bold text-[#E2C799] block font-mono">4. 008921-2026</span>
+              <span>6-digit unique case serial number followed by 4-digit filing year</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Key State Clusters -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 pt-2">
+          ${sampleClusters.map(sc => `
+            <div class="p-3.5 rounded-2xl bg-[#060B13]/80 border border-slate-800 hover:border-slate-700 space-y-1 text-xs">
+              <div class="font-bold text-[#E2C799]">${sc.state}</div>
+              <p class="text-[11px] text-slate-400">${sc.districts}</p>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  } else if (tabKey === 'TRIBUNALS') {
+    const list = data.tribunals || [];
+    cardsHtml = list.map(t => `
+      <div class="firm-card p-5 bg-[#0F172A] border border-slate-800 hover:border-[#C5A880]/50 rounded-2xl space-y-3.5 transition flex flex-col justify-between">
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded-full font-bold">
+              ${t.shortName}
+            </span>
+            <span class="text-[10px] text-slate-400 font-mono">${t.headquarters}</span>
+          </div>
+          <h4 class="text-sm font-bold text-white leading-snug">${t.name}</h4>
+          <div class="text-[11px] text-[#E2C799] font-medium">${t.nameHi || ''}</div>
+          <p class="text-[11px] text-slate-400 leading-relaxed">${t.jurisdictionSubject}</p>
+        </div>
+
+        <div class="pt-3 border-t border-slate-800 flex items-center justify-between gap-2">
+          <a href="${t.officialPortal}" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-xl bg-[#060B13] border border-slate-700 hover:border-[#E2C799] text-xs font-bold text-slate-300 hover:text-white flex items-center space-x-1 transition">
+            <i data-lucide="external-link" class="w-3 h-3"></i>
+            <span>Official Portal</span>
+          </a>
+          <button onclick="setAndQueryDocket('${t.sampleDocket}')" class="px-3 py-1.5 rounded-xl btn-champagne text-xs font-bold flex items-center space-x-1 transition">
+            <i data-lucide="search" class="w-3 h-3"></i>
+            <span>Test Case</span>
+          </button>
+        </div>
+      </div>
+    `).join('');
+  } else if (tabKey === 'RTI_COMMISSIONS') {
+    const list = data.rtiCommissions || [];
+    cardsHtml = list.map(r => `
+      <div class="firm-card p-5 bg-[#0F172A] border border-slate-800 hover:border-[#C5A880]/50 rounded-2xl space-y-3.5 transition flex flex-col justify-between">
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] bg-blue-950 text-blue-400 border border-blue-800 px-2 py-0.5 rounded-full font-bold">
+              RTI Act 2005
+            </span>
+            <span class="text-[10px] text-slate-400 font-mono">${r.state || 'National'}</span>
+          </div>
+          <h4 class="text-sm font-bold text-white leading-snug">${r.name}</h4>
+          <div class="text-[11px] text-[#E2C799] font-medium">${r.nameHi || ''}</div>
+          <p class="text-[11px] text-slate-400 leading-relaxed">${r.jurisdiction || r.description || 'Statutory Transparency Body'}</p>
+        </div>
+
+        <div class="pt-3 border-t border-slate-800 flex items-center justify-between gap-2">
+          <a href="${r.officialPortal}" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-xl bg-[#060B13] border border-slate-700 hover:border-[#E2C799] text-xs font-bold text-slate-300 hover:text-white flex items-center space-x-1 transition">
+            <i data-lucide="external-link" class="w-3 h-3"></i>
+            <span>Official Portal</span>
+          </a>
+          <button onclick="setAndQueryDocket('${r.sampleAppeal || 'CIC-WB-A-2026-00419'}')" class="px-3 py-1.5 rounded-xl btn-champagne text-xs font-bold flex items-center space-x-1 transition">
+            <i data-lucide="search" class="w-3 h-3"></i>
+            <span>Lookup Appeal</span>
+          </button>
+        </div>
+      </div>
+    `).join('');
+  } else if (tabKey === 'COMMISSIONS') {
+    const list = data.statutoryCommissions || [];
+    cardsHtml = list.map(c => `
+      <div class="firm-card p-5 bg-[#0F172A] border border-slate-800 hover:border-[#C5A880]/50 rounded-2xl space-y-3.5 transition flex flex-col justify-between">
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] bg-purple-950 text-purple-400 border border-purple-800 px-2 py-0.5 rounded-full font-bold">
+              Statutory Commission
+            </span>
+            <span class="text-[10px] text-slate-400 font-mono">${c.headquarters || 'New Delhi'}</span>
+          </div>
+          <h4 class="text-sm font-bold text-white leading-snug">${c.name}</h4>
+          <div class="text-[11px] text-[#E2C799] font-medium">${c.nameHi || ''}</div>
+          <p class="text-[11px] text-slate-400 leading-relaxed">${c.focusArea || c.description || 'National Statutory Body'}</p>
+        </div>
+
+        <div class="pt-3 border-t border-slate-800 flex items-center justify-between gap-2">
+          <a href="${c.officialPortal}" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-xl bg-[#060B13] border border-slate-700 hover:border-[#E2C799] text-xs font-bold text-slate-300 hover:text-white flex items-center space-x-1 transition">
+            <i data-lucide="external-link" class="w-3 h-3"></i>
+            <span>Official Portal</span>
+          </a>
+          <button onclick="setAndQueryDocket('${c.sampleDocket || 'EDA-NCDRC-2026-3391'}')" class="px-3 py-1.5 rounded-xl btn-champagne text-xs font-bold flex items-center space-x-1 transition">
+            <i data-lucide="search" class="w-3 h-3"></i>
+            <span>Resolve Grievance</span>
+          </button>
+        </div>
+      </div>
+    `).join('');
+  } else if (tabKey === 'OMBUDSMAN') {
+    const list = data.ombudsmenAndRegulators || [];
+    cardsHtml = list.map(o => `
+      <div class="firm-card p-5 bg-[#0F172A] border border-slate-800 hover:border-[#C5A880]/50 rounded-2xl space-y-3.5 transition flex flex-col justify-between">
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] bg-amber-950 text-[#E2C799] border border-amber-800 px-2 py-0.5 rounded-full font-bold">
+              Ombudsman / Regulator
+            </span>
+            <span class="text-[10px] text-slate-400 font-mono">${o.sector}</span>
+          </div>
+          <h4 class="text-sm font-bold text-white leading-snug">${o.name}</h4>
+          <div class="text-[11px] text-[#E2C799] font-medium">${o.nameHi || ''}</div>
+          <p class="text-[11px] text-slate-400 leading-relaxed">${o.description || o.portalDescription || ''}</p>
+        </div>
+
+        <div class="pt-3 border-t border-slate-800 flex items-center justify-between gap-2">
+          <a href="${o.officialPortal}" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-xl bg-[#060B13] border border-slate-700 hover:border-[#E2C799] text-xs font-bold text-slate-300 hover:text-white flex items-center space-x-1 transition">
+            <i data-lucide="external-link" class="w-3 h-3"></i>
+            <span>File Complaint</span>
+          </a>
+          <button onclick="setAndQueryDocket('${o.sampleComplaint || 'RBI-CMS-2026-89412'}')" class="px-3 py-1.5 rounded-xl btn-champagne text-xs font-bold flex items-center space-x-1 transition">
+            <i data-lucide="search" class="w-3 h-3"></i>
+            <span>Check Status</span>
+          </button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  container.innerHTML = cardsHtml;
+  lucide.createIcons();
+}
+
+function toggleCauseListPreview() {
+  const section = document.getElementById('causeListPreviewSection');
+  if (!section) return;
+  section.classList.toggle('hidden');
+  const btnText = document.getElementById('btnCauseListText');
+  if (section.classList.contains('hidden')) {
+    if (btnText) btnText.innerText = "View Live Today's Multi-Court Cause List (SC, HC, NGT, NCLT)";
+  } else {
+    if (btnText) btnText.innerText = "Hide Multi-Court Cause List";
+    renderMultiCourtCauseList();
+  }
+}
+
+function renderMultiCourtCauseList() {
+  const container = document.getElementById('multiCourtCauseListContainer');
+  if (!container) return;
+
+  const list = state.multiCourtCauseList || [];
+  if (list.length === 0) {
+    container.innerHTML = `<div class="col-span-full py-4 text-center text-xs text-slate-400">Loading daily court cause lists...</div>`;
+    return;
+  }
+
+  container.innerHTML = list.map(item => `
+    <div class="p-3.5 rounded-2xl bg-[#060B13] border border-slate-800 hover:border-slate-700 space-y-2 text-xs">
+      <div class="flex items-center justify-between">
+        <span class="text-[10px] bg-[#E2C799]/15 text-[#E2C799] border border-[#C5A880]/30 px-2 py-0.5 rounded-full font-bold">
+          Item #${item.itemNumber} • ${item.courtroom}
+        </span>
+        <span class="text-[10px] text-slate-400 font-mono">${item.hearingDate || 'Today'}</span>
+      </div>
+      <div class="font-bold text-white leading-snug">${item.caseTitle}</div>
+      <div class="text-[11px] text-[#E2C799]">${item.institution}</div>
+      <div class="text-[10px] text-slate-400 flex items-center justify-between pt-1 border-t border-slate-800/80">
+        <span class="truncate">${item.bench || 'Hon\'ble Presiding Bench'}</span>
+        <span class="text-emerald-400 font-semibold">${item.stage}</span>
+      </div>
+    </div>
+  `).join('');
+  lucide.createIcons();
+}
+
+function setAndQueryDocket(docketNo) {
+  const input = document.getElementById('judicialQueryInput');
+  if (input) input.value = docketNo;
+  const gridSection = document.getElementById('section-judicial-grid');
+  if (gridSection) gridSection.scrollIntoView({ behavior: 'smooth' });
+  executeJudicialLookup(docketNo);
+}
+
+function handleJudicialLookup(e) {
+  if (e) e.preventDefault();
+  const input = document.getElementById('judicialQueryInput');
+  const query = input ? input.value.trim() : '';
+  if (!query) return;
+  executeJudicialLookup(query);
+}
+
+async function executeJudicialLookup(query) {
+  const btn = document.getElementById('btnJudicialSearch');
+  const btnText = document.getElementById('btnTextJudicialSearch');
+  if (btn) btn.disabled = true;
+  if (btnText) btnText.innerText = 'Resolving Gateway...';
+
+  try {
+    const res = await fetch(`${API_BASE}/judicial/lookup?query=${encodeURIComponent(query)}`);
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.error || 'Failed to resolve docket. Please verify CNR number.');
+      if (btn) btn.disabled = false;
+      if (btnText) btnText.innerText = t('btnTextJudicialSearch');
+      return;
+    }
+
+    state.currentResolvedDocket = data;
+
+    // Populate Modal
+    document.getElementById('docketModalTitle').innerText = data.caseTitle || `Matter: ${data.docketNumber}`;
+    document.getElementById('docketModalInstitution').innerText = `${data.institutionName || 'National Judicial Network'} • ${data.category || ''}`;
+    document.getElementById('docketModalNumber').innerText = data.docketNumber || data.cnrNumber || query;
+    document.getElementById('docketModalFilingDate').innerText = data.filingDate || '28 Oct 2026';
+    document.getElementById('docketModalHearingDate').innerText = data.nextHearingDate || 'Pending Listing';
+    document.getElementById('docketModalStage').innerText = data.stage || 'Listed for Orders';
+
+    document.getElementById('docketModalPetitioner').innerText = data.petitioner || 'Aggrieved Party / Complainant';
+    document.getElementById('docketModalRespondent').innerText = data.respondent || 'State / Respondent Authority';
+
+    document.getElementById('docketModalCourtroom').innerText = `${data.courtroom || 'Courtroom 1'} (${data.presidingJudge || 'Hon\'ble Bench'})`;
+    document.getElementById('docketModalPetAdv').innerText = data.advocateForPetitioner || 'Designated Counsel';
+    document.getElementById('docketModalRespAdv').innerText = data.advocateForRespondent || 'Standing Government Counsel';
+
+    document.getElementById('docketModalLastOrderDate').innerText = data.filingDate || 'Today';
+    document.getElementById('docketModalOrderSummary').innerText = data.lastOrderSummary || 
+      `Notice issued on national gateway. Matter directed to be listed before the Hon'ble Bench on ${data.nextHearingDate || 'next scheduled hearing date'}. Compliance affidavit sought.`;
+
+    const linkEl = document.getElementById('linkOfficialOrdersheet');
+    if (linkEl) {
+      linkEl.href = data.ordersheetUrl || 'https://services.ecourts.gov.in';
+    }
+
+    openModal('modalDocketResult');
+  } catch (err) {
+    console.error('Judicial lookup error', err);
+    alert('Network error while querying Judicial Gateway.');
+  } finally {
+    if (btn) btn.disabled = false;
+    if (btnText) btnText.innerText = t('btnTextJudicialSearch');
+    lucide.createIcons();
+  }
+}
+
+async function trackCurrentDocket() {
+  const docket = state.currentResolvedDocket;
+  if (!docket) return;
+
+  const btn = document.getElementById('btnTrackInVault');
+  if (btn) {
+    btn.disabled = true;
+    btn.innerText = 'Syncing into Legal Vault...';
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/judicial/track-case`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        docketNumber: docket.docketNumber || docket.cnrNumber,
+        courtType: docket.courtType,
+        institutionName: docket.institutionName,
+        caseTitle: docket.caseTitle,
+        clientId: state.currentUser ? state.currentUser.id : 'usr_client_1'
+      })
+    });
+
+    const data = await res.json();
+    closeModal('modalDocketResult');
+    await loadInitialData();
+    switchPortalTab('CLIENT');
+    switchClientSubTab('c-tracker');
+
+    const portals = document.getElementById('section-portals');
+    if (portals) portals.scrollIntoView({ behavior: 'smooth' });
+
+    alert(`Court record ${docket.docketNumber} successfully synchronized into your encrypted Citizen Legal Vault! Daily orders and hearing alerts are now live.`);
+  } catch (err) {
+    console.error('Track case error', err);
+    alert('Failed to sync case into Vault.');
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = `<i data-lucide="shield-check" class="w-4 h-4"></i><span>Track in Citizen Vault (SMS & WhatsApp Alerts)</span>`;
+      lucide.createIcons();
+    }
+  }
 }

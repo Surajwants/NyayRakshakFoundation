@@ -34,7 +34,10 @@
     "scheme": "nrf",
     "extra": {
       "apiUrl": "https://nrfsathi.onrender.com/api",
-      "localApiUrl": "http://10.0.2.2:4000/api"
+      "localApiUrl": "http://10.0.2.2:4000/api",
+      "eas": {
+        "projectId": "32c4925c-622e-4e62-888c-02d3b4f36575"
+      }
     }
   }
 }

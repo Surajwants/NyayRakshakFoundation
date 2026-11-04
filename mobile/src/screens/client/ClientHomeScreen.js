@@ -7,6 +7,7 @@ import {
   StyleSheet,
   SafeAreaView,
   RefreshControl,
+  TextInput,
   Alert
 } from 'react-native';
 import colors from '../../theme/colors';
@@ -23,6 +24,54 @@ export default function ClientHomeScreen({ navigation }) {
   const [refreshing, setRefreshing] = useState(false);
   const [showEmergencyModal, setShowEmergencyModal] = useState(false);
   const [isReleasing, setIsReleasing] = useState(false);
+  const [judicialQuery, setJudicialQuery] = useState('');
+  const [isSearchingDocket, setIsSearchingDocket] = useState(false);
+
+  const handleDocketLookup = async (q) => {
+    const query = q || judicialQuery;
+    if (!query || !query.trim()) {
+      Alert.alert('सूचना', 'कृपया सीएनआर (CNR) या केस नंबर दर्ज करें।');
+      return;
+    }
+    setIsSearchingDocket(true);
+    try {
+      const res = await api.judicial.lookupDocket(query.trim());
+      if (res && res.docket) {
+        const d = res.docket;
+        Alert.alert(
+          '🏛️ अदालत रिकॉर्ड प्राप्त हुआ',
+          `केस: ${d.caseTitle}\n\nन्यायालय: ${d.institutionName}\nसीएनआर: ${d.docketNumber}\nअगली तारीख: ${d.nextHearingDate}\nअवस्था: ${d.stage}\nवकील: ${d.advocateForPetitioner}`,
+          [
+            { text: 'बंद करें', style: 'cancel' },
+            {
+              text: 'वॉल्ट में सिंक करें',
+              onPress: async () => {
+                try {
+                  await api.judicial.trackCase({
+                    docketNumber: d.docketNumber,
+                    courtType: d.courtType,
+                    institutionName: d.institutionName,
+                    caseTitle: d.caseTitle,
+                    clientId: user?.id || 'usr_client_1'
+                  });
+                  Alert.alert('सफल', `केस ${d.docketNumber} आपके लीगल वॉल्ट में जोड़ दिया गया है!`);
+                  await loadData();
+                } catch (e) {
+                  Alert.alert('त्रुटि', 'वॉल्ट में सिंक करने में विफल।');
+                }
+              }
+            }
+          ]
+        );
+      } else {
+        Alert.alert('सूचना', 'इस नंबर का रिकॉर्ड नहीं मिला।');
+      }
+    } catch (err) {
+      Alert.alert('त्रुटि', err.message || 'अदालत रिकॉर्ड खोजने में विफल।');
+    } finally {
+      setIsSearchingDocket(false);
+    }
+  };
 
   const loadData = async () => {
     try {
@@ -189,6 +238,77 @@ export default function ClientHomeScreen({ navigation }) {
               </View>
             ))}
           </View>
+        </View>
+
+        {/* ================= 2B. ALL-INDIA JUDICIAL & TRIBUNAL SEARCH GRID ================= */}
+        <View style={styles.sectionCard}>
+          <View style={styles.sectionHeader}>
+            <View>
+              <Text style={styles.sectionTitle}>अखिल भारतीय कोर्ट व अधिकरण सर्च</Text>
+              <Text style={styles.sectionSubtitle}>
+                सुप्रीम कोर्ट, 25 हाई कोर्ट, जिला अदालतें, NGT, NCLT, CIC व रेरा
+              </Text>
+            </View>
+            <View style={styles.courtBadgePill}>
+              <Text style={styles.courtBadgeText}>28 राज्य + 8 UTs</Text>
+            </View>
+          </View>
+
+          <View style={styles.judicialSearchContainer}>
+            <TextInput
+              style={styles.judicialInput}
+              placeholder="16-अंकीय CNR या केस नंबर दर्ज करें..."
+              placeholderTextColor={colors.textMuted}
+              value={judicialQuery}
+              onChangeText={setJudicialQuery}
+              autoCapitalize="characters"
+            />
+            <TouchableOpacity
+              style={styles.judicialSearchBtn}
+              onPress={() => handleDocketLookup()}
+              disabled={isSearchingDocket}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.judicialSearchBtnText}>
+                {isSearchingDocket ? '...' : 'जाँचें →'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Quick Demo Chips */}
+          <Text style={styles.quickChipsLabel}>त्वरित जांच (Quick Sample Dockets):</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipsScroll}>
+            <TouchableOpacity
+              style={styles.chipButton}
+              onPress={() => { setJudicialQuery('PBJL01-008921-2026'); handleDocketLookup('PBJL01-008921-2026'); }}
+            >
+              <Text style={styles.chipButtonText}>जिला कोर्ट (PBJL01)</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.chipButton}
+              onPress={() => { setJudicialQuery('DLHC01-014529-2026'); handleDocketLookup('DLHC01-014529-2026'); }}
+            >
+              <Text style={styles.chipButtonText}>दिल्ली हाई कोर्ट (DLHC01)</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.chipButton}
+              onPress={() => { setJudicialQuery('SCIN01-002841-2026'); handleDocketLookup('SCIN01-002841-2026'); }}
+            >
+              <Text style={styles.chipButtonText}>सुप्रीम कोर्ट (SCIN01)</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.chipButton}
+              onPress={() => { setJudicialQuery('NGT-PB-OA-2026-9041'); handleDocketLookup('NGT-PB-OA-2026-9041'); }}
+            >
+              <Text style={styles.chipButtonText}>एनजीटी (NGT Bench)</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.chipButton}
+              onPress={() => { setJudicialQuery('CIC-WB-A-2026-00419'); handleDocketLookup('CIC-WB-A-2026-00419'); }}
+            >
+              <Text style={styles.chipButtonText}>आरटीआई (CIC)</Text>
+            </TouchableOpacity>
+          </ScrollView>
         </View>
 
         {/* ================= 3. STEP-BY-STEP MILESTONE ESCROW WALLET ================= */}
@@ -761,5 +881,70 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '900',
     letterSpacing: 0.5
+  },
+  courtBadgePill: {
+    backgroundColor: 'rgba(226, 199, 153, 0.12)',
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(197, 168, 128, 0.3)'
+  },
+  courtBadgeText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: colors.champagne
+  },
+  judicialSearchContainer: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 8
+  },
+  judicialInput: {
+    flex: 1,
+    backgroundColor: colors.background,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 9,
+    color: colors.white,
+    fontSize: 12
+  },
+  judicialSearchBtn: {
+    backgroundColor: colors.champagne,
+    borderRadius: 10,
+    paddingHorizontal: 14,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  judicialSearchBtnText: {
+    color: colors.header,
+    fontSize: 12,
+    fontWeight: '800'
+  },
+  quickChipsLabel: {
+    fontSize: 10,
+    color: colors.textMuted,
+    fontWeight: '600',
+    marginTop: 8
+  },
+  chipsScroll: {
+    flexDirection: 'row',
+    marginTop: 6
+  },
+  chipButton: {
+    backgroundColor: colors.background,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 8,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    marginRight: 6
+  },
+  chipButtonText: {
+    color: colors.champagne,
+    fontSize: 10,
+    fontWeight: '700'
   }
 });

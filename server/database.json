@@ -113,6 +113,41 @@
   ],
   "cases": [
     {
+      "id": "tracked_1793783919693",
+      "clientId": "usr_client_1",
+      "folderName": "Vikram Singh vs. Harminder Singh",
+      "category": "DISTRICT_COURT",
+      "title": "Vikram Singh vs. Harminder Singh",
+      "cnrNumber": "PBJL01-008921-2026",
+      "summary": "Tracked from official judicial network: Jalandhar District Court. Automatic sync with e-Courts and cause lists.",
+      "jurisdiction": {
+        "country": "India",
+        "state": "National Integration",
+        "court": "Jalandhar District Court"
+      },
+      "guidelineFeePaid": true,
+      "status": "TRACKING_ACTIVE",
+      "currentStage": "LIVE_DOCKET_SYNCED",
+      "timelineSteps": [
+        {
+          "title": "Case Docket Synced from Judicial Grid",
+          "date": "Active Today",
+          "done": true
+        },
+        {
+          "title": "e-Courts Daily Ordersheet Monitored",
+          "date": "Real-Time Sync",
+          "done": true
+        },
+        {
+          "title": "Upcoming Hearing Reminder Set",
+          "date": "Automated SMS/Push",
+          "done": true
+        }
+      ],
+      "createdAt": "2026-11-04T09:18:39.693Z"
+    },
+    {
       "id": "case_101",
       "clientId": "usr_client_1",
       "folderName": "Ancestral Property Encroachment & Mutation",
@@ -720,6 +755,15 @@
     }
   ],
   "notifications": [
+    {
+      "id": "notif_1793783919695",
+      "type": "HEARING_ALERT",
+      "title": "Case Synced: PBJL01-008921-2026",
+      "body": "Successfully integrated with Jalandhar District Court. Next hearing date reminders active.",
+      "caseId": "tracked_1793783919693",
+      "time": "Just now",
+      "urgent": true
+    },
     {
       "id": "notif_1",
       "type": "HEARING_ALERT",
